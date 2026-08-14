@@ -1,0 +1,121 @@
+/* Navigation */
+.app-nav-menu {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0;
+}
+
+.app-nav-menu__link {
+    border: 2px solid #4169e1;
+    border-radius: 4px;
+    padding: 6px 20px;
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+    background-color: #fff;
+}
+
+.app-nav-menu__link--active {
+    background-color: #b8b8b8;
+}
+
+/* Content Header */
+.app-cmp-content-header__title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 24px 0;
+}
+
+/* List Page */
+.app-list-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.app-list-section__heading {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.app-data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.app-data-table__caption {
+    display: none;
+}
+
+.app-data-table__head {
+    background-color: #808080;
+}
+
+.app-data-table__th {
+    padding: 6px 10px;
+    border: 1px solid #000;
+    font-weight: bold;
+}
+
+.app-data-table__th--code {
+    width: 100px;
+}
+
+.app-data-table__td {
+    padding: 4px 10px;
+    border: 1px solid #000;
+}
+
+.app-data-table__link {
+    color: #0000ff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.app-data-table__link:hover {
+    text-decoration: underline;
+}
+
+/* Detail/View Page */
+.app-detail-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.app-detail-list {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    row-gap: 4px;
+}
+
+.app-detail-list__term {
+    font-weight: bold;
+}
+
+.app-detail-list__term::after {
+    content: " ::";
+}
+
+.app-detail-list__desc {
+    margin: 0;
+}
+
+.app-detail-list__desc--multiline {
+    white-space: pre-line;
+}
+
+.app-detail-description {
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin-top: 16px;
+}
+
+/* Footer */
+.app-main-footer {
+    text-align: center;
+    padding: 16px 0;
+    font-size: 0.85rem;
+    color: #555;
+}
