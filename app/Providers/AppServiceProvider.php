@@ -17,8 +17,9 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        //
-    }
+public function boot(): void
+{
+    \Illuminate\Pagination\Paginator::defaultView('pagination::semantic-ui');
+    \Illuminate\Pagination\Paginator::defaultSimpleView('pagination::semantic-ui');
+}
 }

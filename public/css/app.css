@@ -14,10 +14,19 @@
     color: #000;
     text-decoration: none;
     background-color: #fff;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.app-nav-menu__link:hover {
+    background-color: #e6ecfc;
 }
 
 .app-nav-menu__link--active {
     background-color: #b8b8b8;
+}
+
+.app-nav-menu__link--active:hover {
+    background-color: #a5a5a5;
 }
 
 /* Content Header */
@@ -118,4 +127,193 @@
     padding: 16px 0;
     font-size: 0.85rem;
     color: #555;
+}
+
+/* ===== Search Box ===== */
+.app-cmp-search-form {
+    max-width: 800px;
+    margin: 0 auto 16px;
+}
+
+.app-cmp-search-form fieldset {
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 12px 16px;
+}
+
+.app-cmp-search-form legend {
+    padding: 0 6px;
+    font-weight: bold;
+}
+
+.app-cmp-search-form label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.app-cmp-search-form label b {
+    width: 80px;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.app-cmp-search-form input[type="text"],
+.app-cmp-search-form input[type="number"] {
+    flex: 1;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 4px 8px;
+}
+
+.app-cmp-search-form button[type="submit"] {
+    background-color: #1a3fd6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-cmp-search-form button[type="submit"]:hover {
+    background-color: #142fb0;
+}
+
+.app-cmp-search-form fieldset > a {
+    background-color: #d21e1e;
+    color: #fff;
+    border-radius: 4px;
+    padding: 6px 20px;
+    font-weight: bold;
+    text-decoration: none;
+    float: right;
+}
+
+.app-cmp-search-form fieldset > a:hover {
+    background-color: #a51616;
+}
+
+/* ===== Links Bar (Create Product + Pagination) ===== */
+.app-cmp-links-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto 16px;
+}
+
+.app-cmp-links {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+}
+
+.app-cmp-links li a {
+    display: inline-block;
+    background-color: #1a3fd6;
+    color: #fff;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.app-cmp-links li a:hover {
+    background-color: #142fb0;
+}
+
+/* ===== Create/Update Form ===== */
+.app-form-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.app-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.app-form__field {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: start;
+    gap: 8px;
+}
+
+.app-form__label {
+    font-weight: bold;
+    padding-top: 6px;
+}
+
+.app-form__input {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 6px 8px;
+}
+
+.app-form__textarea {
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.app-form__submit {
+    align-self: flex-start;
+    background-color: #1a3fd6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-form__submit:hover {
+    background-color: #142fb0;
+}
+
+/* ===== Action Links (Update / Delete) ===== */
+.app-action-links {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    list-style: none;
+    margin: 16px 0;
+    padding: 0;
+}
+
+.app-action-links__update {
+    display: inline-block;
+    background-color: #1a3fd6;
+    color: #fff;
+    border-radius: 4px;
+    padding: 6px 20px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.app-action-links__update:hover {
+    background-color: #142fb0;
+}
+
+.app-action-links__delete {
+    display: inline-block;
+    background-color: #d21e1e;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-action-links__delete:hover {
+    background-color: #a51616;
 }

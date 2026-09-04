@@ -2,6 +2,45 @@
     'title' => 'List',
 ])
 
+@section('header')
+<search>
+    <form action="{{ route('products.list') }}" method="get" class="app-cmp-search-form">
+        <fieldset>
+            <legend>Search</legend>
+            <label>
+                <b>Search</b>
+                <input type="text" name="term" value="{{ $criteria['term'] }}" />
+            </label>
+            <br />
+            <label>
+                Min Price
+                <input type="number" name="minPrice" value="{{ $criteria['minPrice'] }}"
+                    step="0.01" />
+            </label><br />
+            <label>
+                Max Price
+                <input type="number" name="maxPrice" value="{{ $criteria['maxPrice'] }}"
+                    step="0.01" />
+            </label><br />
+            <button type="submit">Filter</button>
+            <a href="{{ route('products.list') }}">Clear</a>
+        </fieldset>
+    </form>
+</search>
+
+<div class="app-cmp-links-bar">
+    <nav>
+        <ul class="app-cmp-links">
+            <li>
+                <a href="{{ route('products.create-form') }}">Create Product</a>
+            </li>
+        </ul>
+    </nav>
+    {{ $products->withQueryString()->links() }}
+
+</div>
+@endsection
+
 @section('content')
     <section class="app-list-section">
         <h2 class="app-list-section__heading">List of Products</h2>
@@ -12,6 +51,7 @@
                 <tr>
                     <th class="app-data-table__th app-data-table__th--code">Code</th>
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
+                    <th class="app-data-table__th">Price</th>
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -27,6 +67,10 @@
                         <td class="app-data-table__td app-data-table__td--name">
                             {{ $product->name }}
                         </td>
+                                        <td class="app-data-table__td">{{ number_format($product->price, 2) }}
+                                            
+                                        </td>
+
                     </tr>
                 @endforeach
             </tbody>

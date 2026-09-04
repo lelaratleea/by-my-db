@@ -1,6 +1,35 @@
+{{-- shops/list.blade.php --}}
 @extends('shops.main', [
     'title' => 'List',
 ])
+
+@section('header')
+<search>
+    <form action="{{ route('shops.list') }}" method="get" class="app-cmp-search-form">
+        <fieldset>
+            <legend>Search</legend>
+            <label>
+                <b>Search</b>
+                <input type="text" name="term" value="{{ $criteria['term'] }}" />
+            </label>
+            <br />
+            <button type="submit">Filter</button>
+            <a href="{{ route('shops.list') }}">Clear</a>
+        </fieldset>
+    </form>
+</search>
+
+<div class="app-cmp-links-bar">
+    <nav>
+        <ul class="app-cmp-links">
+            <li>
+                <a href="{{ route('shops.create-form') }}">Create Shop</a>
+            </li>
+        </ul>
+    </nav>
+    {{ $shops->withQueryString()->links() }}
+</div>
+@endsection
 
 @section('content')
     <section class="app-list-section">
@@ -12,7 +41,7 @@
                 <tr>
                     <th class="app-data-table__th app-data-table__th--code">Code</th>
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
-                    <th class="app-data-table__th app-data-table__th--owner">Owner</th>
+                    <th class="app-data-table__th">Owner</th>
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -28,9 +57,7 @@
                         <td class="app-data-table__td app-data-table__td--name">
                             {{ $shop->name }}
                         </td>
-                        <td class="app-data-table__td app-data-table__td--owner">
-                            {{ $shop->owner }}
-                        </td>
+                        <td class="app-data-table__td">{{ $shop->owner }}</td>
                     </tr>
                 @endforeach
             </tbody>

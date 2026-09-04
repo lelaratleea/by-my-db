@@ -12,27 +12,39 @@ Route::get('/', function () {
 Route::controller(ProductController::class)
     ->prefix('/products')
     ->name('products.')
-    ->group(static function(Router $router): void {
+    ->group(static function (Router $router): void {   // ✅ แก้ตรงนี้
         $prefixName = \array_last($router->getGroupStack())['as'];
-
-        Route::any('', static fn() => redirect()
-            ->route("{$prefixName}index"))
+        Route::any('', static fn() => redirect()->route("{$prefixName}list"))
             ->name('index');
-
-        Route::get('', 'index')->name('list');
-        Route::get('/{product}', 'view')->name('view');
+        Route::get('', 'list')->name('list');
+        Route::post('', 'create')->name('create');
+        Route::get('/create', 'showCreateForm')->name('create-form');
+        Route::prefix('/{product}')
+            ->group(static function (): void {
+                Route::get('', 'view')->name('view');
+                Route::post('', 'update')->name('update');
+                Route::get('/update', 'showUpdateForm')->name('update-form');
+                Route::post('/delete', 'delete')->name('delete');
+            });
     });
 
 Route::controller(ShopController::class)
     ->prefix('/shops')
     ->name('shops.')
-    ->group(static function(Router $router): void {
+    ->group(static function () use ($router): void {
         $prefixName = \array_last($router->getGroupStack())['as'];
 
-        Route::any('', static fn() => redirect()
-            ->route("{$prefixName}index"))
+        Route::any('', static fn() => redirect()->route("{$prefixName}list"))
             ->name('index');
+        Route::get('', 'list')->name('list');
+        Route::post('', 'create')->name('create');
+        Route::get('/create', 'showCreateForm')->name('create-form');
 
-        Route::get('', 'index')->name('list');
-        Route::get('/{shop}', 'view')->name('view');
+        Route::prefix('/{shop}')
+            ->group(static function (): void {
+                Route::get('', 'view')->name('view');
+                Route::post('', 'update')->name('update');
+                Route::get('/update', 'showUpdateForm')->name('update-form');
+                Route::post('/delete', 'delete')->name('delete');
+            });
     });

@@ -2,6 +2,27 @@
     'title' => $product->name,
 ])
 
+@section('header')
+<nav>
+    <form action="{{ route('products.delete', [
+        'product' => $product->code,
+    ]) }}" method="post"
+        id="app-form-delete">
+        @csrf
+    </form>
+<ul class="app-action-links">
+    <li>
+        <a href="{{ route('products.update-form', [
+            'product' => $product->code,
+        ]) }}" class="app-action-links__update">Update</a>
+    </li>
+    <li>
+        <button type="submit" form="app-form-delete" class="app-action-links__delete">Delete</button>
+    </li>
+</ul>
+</nav>
+@endsection
+
 @section('content')
     <section class="app-detail-section">
         <dl class="app-detail-list">

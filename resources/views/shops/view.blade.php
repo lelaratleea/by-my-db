@@ -1,6 +1,26 @@
-@extends('shops.main', [
+{{-- shops/view.blade.php --}}
+@extends('Shops.main', [
     'title' => $shop->name,
 ])
+
+@section('header')
+<form action="{{ route('shops.delete', ['shop' => $shop->code]) }}" method="post" id="app-form-delete">
+    @csrf
+</form>
+
+<ul class="app-action-links">
+    <li>
+        <a href="{{ route('shops.update-form', ['shop' => $shop->code]) }}" class="app-action-links__update">
+            Update
+        </a>
+    </li>
+    <li>
+        <button type="submit" form="app-form-delete" class="app-action-links__delete">
+            Delete
+        </button>
+    </li>
+</ul>
+@endsection
 
 @section('content')
     <section class="app-detail-section">
