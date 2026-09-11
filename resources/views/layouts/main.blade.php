@@ -2,11 +2,11 @@
 
 <header id="app-main-header">
     <nav class="app-nav-menu">
-        <a href="{{ route('products.index') }}"
+        <a href="{{ route('products.list') }}"
            class="app-nav-menu__link {{ request()->routeIs('products.*') ? 'app-nav-menu__link--active' : '' }}">
             Product
         </a>
-        <a href="{{ route('shops.index') }}"
+        <a href="{{ route('shops.list') }}"
            class="app-nav-menu__link {{ request()->routeIs('shops.*') ? 'app-nav-menu__link--active' : '' }}">
             Shop
         </a>

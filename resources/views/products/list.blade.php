@@ -52,6 +52,7 @@
                     <th class="app-data-table__th app-data-table__th--code">Code</th>
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
                     <th class="app-data-table__th">Price</th>
+                    <th class="app-data-table__th">No. of Shops</th>
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -67,10 +68,8 @@
                         <td class="app-data-table__td app-data-table__td--name">
                             {{ $product->name }}
                         </td>
-                                        <td class="app-data-table__td">{{ number_format($product->price, 2) }}
-                                            
-                                        </td>
-
+                        <td class="app-data-table__td">{{ number_format($product->price, 2) }}</td>
+                        <td class="app-data-table__td">{{ $product->shops_count }}</td>
                     </tr>
                 @endforeach
             </tbody>

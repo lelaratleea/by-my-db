@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class SearchableController extends Controller
@@ -36,7 +37,7 @@ abstract class SearchableController extends Controller
     }
 
     final function filterByTerm(
-        Builder $query,
+        Builder|Relation $query,
         string $term,
         array $termOptions,
     ): void {
@@ -56,7 +57,7 @@ abstract class SearchableController extends Controller
     }
 
     function filter(
-        Builder $query, array $criteria,
+        Builder|Relation $query, array $criteria,
         array $filterOptions,
     ): void {
         if ($criteria['term'] !== null) {

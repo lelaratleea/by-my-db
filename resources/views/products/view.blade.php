@@ -12,6 +12,11 @@
     </form>
 <ul class="app-action-links">
     <li>
+        <a href="{{ route('products.view-shops', [
+            'product' => $product->code,
+        ]) }}" class="app-action-links__view-shops">View Shops</a>
+    </li>
+    <li>
         <a href="{{ route('products.update-form', [
             'product' => $product->code,
         ]) }}" class="app-action-links__update">Update</a>

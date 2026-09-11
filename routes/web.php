@@ -2,49 +2,33 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('products.index');
-});
-
 Route::controller(ProductController::class)
-    ->prefix('/products')
+    ->prefix('products')
     ->name('products.')
-    ->group(static function (Router $router): void {   // ✅ แก้ตรงนี้
-        $prefixName = \array_last($router->getGroupStack())['as'];
-        Route::any('', static fn() => redirect()->route("{$prefixName}list"))
-            ->name('index');
-        Route::get('', 'list')->name('list');
-        Route::post('', 'create')->name('create');
+    ->group(function () {
+        Route::get('/', 'list')->name('list');
         Route::get('/create', 'showCreateForm')->name('create-form');
-        Route::prefix('/{product}')
-            ->group(static function (): void {
-                Route::get('', 'view')->name('view');
-                Route::post('', 'update')->name('update');
-                Route::get('/update', 'showUpdateForm')->name('update-form');
-                Route::post('/delete', 'delete')->name('delete');
-            });
+        Route::post('/', 'create')->name('create');
+        Route::get('/{product}', 'view')->name('view');
+        Route::get('/{product}/update', 'showUpdateForm')->name('update-form');
+        Route::put('/{product}', 'update')->name('update');
+        Route::delete('/{product}', 'delete')->name('delete');
+
+        // Step 8: เพิ่ม route นี้ หลัง route delete
+        Route::get('/{product}/shops', 'viewShops')->name('view-shops');
     });
 
 Route::controller(ShopController::class)
-    ->prefix('/shops')
+    ->prefix('shops')
     ->name('shops.')
-    ->group(static function () use ($router): void {
-        $prefixName = \array_last($router->getGroupStack())['as'];
-
-        Route::any('', static fn() => redirect()->route("{$prefixName}list"))
-            ->name('index');
-        Route::get('', 'list')->name('list');
-        Route::post('', 'create')->name('create');
+    ->group(function () {
+        Route::get('/', 'list')->name('list');
         Route::get('/create', 'showCreateForm')->name('create-form');
-
-        Route::prefix('/{shop}')
-            ->group(static function (): void {
-                Route::get('', 'view')->name('view');
-                Route::post('', 'update')->name('update');
-                Route::get('/update', 'showUpdateForm')->name('update-form');
-                Route::post('/delete', 'delete')->name('delete');
-            });
+        Route::post('/', 'create')->name('create');
+        Route::get('/{shop}', 'view')->name('view');
+        Route::get('/{shop}/update', 'showUpdateForm')->name('update-form');
+        Route::put('/{shop}', 'update')->name('update');
+        Route::delete('/{shop}', 'delete')->name('delete');
     });

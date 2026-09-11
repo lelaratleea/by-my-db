@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Psr\Http\Message\ServerRequestInterface;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -30,43 +31,59 @@ class ProductController extends SearchableController
         ];
     }
 
-    function filterByMinPrice(Builder $query, float $minPrice): void
+    function filterByMinPrice(Builder|Relation $query, float $minPrice): void
     {
         $query->where('price', '>=', $minPrice);
     }
 
-    function filterByMaxPrice(Builder $query, float $maxPrice): void
+    function filterByMaxPrice(Builder|Relation $query, float $maxPrice): void
     {
         $query->where('price', '<=', $maxPrice);
     }
 
-#[\Override()]
-function filter(Builder $query, array $criteria, array $filterOptions): void
-{
-    parent::filter($query, $criteria, $filterOptions);
-    if ($criteria['minPrice'] !== null) {
-        $this->filterByMinPrice($query, $criteria['minPrice']);
+    #[\Override()]
+    function filter(Builder|Relation $query, array $criteria, array $filterOptions): void
+    {
+        parent::filter($query, $criteria, $filterOptions);
+        if ($criteria['minPrice'] !== null) {
+            $this->filterByMinPrice($query, $criteria['minPrice']);
+        }
+        if ($criteria['maxPrice'] !== null) {
+            $this->filterByMaxPrice($query, $criteria['maxPrice']);
+        }
     }
-    if ($criteria['maxPrice'] !== null) {
-        $this->filterByMaxPrice($query, $criteria['maxPrice']);
-    }
-}
 
-function list(ServerRequestInterface $request): View
-{
-    $criteria = $this->prepareCriteria($request->getQueryParams());
-    $query = $this->search($criteria);
-    return view('products.list', [
-        'criteria' => $criteria,
-        'products' => $query->paginate(static::MAX_ITEMS), // ✅ ต้องเป็น paginate()
-    ]);
-}
+    function list(ServerRequestInterface $request): View
+    {
+        $criteria = $this->prepareCriteria($request->getQueryParams());
+        $query = $this->search($criteria)->withCount('shops');
+        return view('products.list', [
+            'criteria' => $criteria,
+            'products' => $query->paginate(static::MAX_ITEMS),
+        ]);
+    }
 
     function view(string $productCode): View
     {
         $product = $this->find($productCode);
         return view('products.view', [
             'product' => $product,
+        ]);
+    }
+
+    function viewShops(string $productCode, ServerRequestInterface $request): View
+    {
+        $product = $this->find($productCode);
+        $shopController = \resolve(ShopController::class);
+        $criteria = $shopController->prepareCriteria($request->getQueryParams());
+        $filterOptions = $shopController->getFilterOptions();
+        $query = $product->shops()->withCount('products');
+        $shopController->filter($query, $criteria, $filterOptions);
+
+        return view('products.view-shops', [
+            'criteria' => $criteria,
+            'product' => $product,
+            'shops' => $query->paginate($shopController::MAX_ITEMS),
         ]);
     }
 
@@ -104,9 +121,9 @@ function list(ServerRequestInterface $request): View
     }
 
     function delete(string $productCode): RedirectResponse
-    {
-        $product = $this->find($productCode);
-        $product->delete();
-        return redirect()->route('products.index');
-    }
+{
+    $product = $this->find($productCode);
+    $product->delete();
+    return redirect()->route('products.list');   // เปลี่ยนจาก products.index เป็น products.list
+}
 }

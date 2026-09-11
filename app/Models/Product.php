@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[Fillable(['code', 'name', 'price', 'description'])]
 class Product extends Model
 {
-    // ... other declaration
+    function shops(): BelongsToMany {
+        return $this
+            ->belongsToMany(Shop::class)
+            ->withTimestamps();
+    }
 }
