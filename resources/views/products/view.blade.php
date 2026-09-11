@@ -37,6 +37,13 @@
             <dt class="app-detail-list__term">Name</dt>
             <dd class="app-detail-list__desc">{{ $product->name }}</dd>
 
+            <dt class="app-detail-list__term">Category</dt>
+<dd class="app-detail-list__desc">
+    @if($product->category)
+        [<a href="{{ route('categories.view', ['category' => $product->category->code]) }}">{{ $product->category->code }}</a>] {{ $product->category->name }}
+    @endif
+</dd>
+
             <dt class="app-detail-list__term">Price</dt>
             <dd class="app-detail-list__desc">{{ number_format((float)$product->price, 2) }}</dd>
         </dl>

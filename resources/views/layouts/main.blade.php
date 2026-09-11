@@ -10,6 +10,10 @@
            class="app-nav-menu__link {{ request()->routeIs('shops.*') ? 'app-nav-menu__link--active' : '' }}">
             Shop
         </a>
+        <a href="{{ route('categories.list') }}"
+   class="app-nav-menu__link {{ request()->routeIs('categories.*') ? 'app-nav-menu__link--active' : '' }}">
+    Category
+</a>
     </nav>
 </header>
 <main id="app-main-content">

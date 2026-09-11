@@ -42,6 +42,7 @@
                     <th class="app-data-table__th app-data-table__th--code">Code</th>
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
                     <th class="app-data-table__th">Owner</th>
+                    <th class="app-data-table__th">No. of Products</th>
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -58,6 +59,7 @@
                             {{ $shop->name }}
                         </td>
                         <td class="app-data-table__td">{{ $shop->owner }}</td>
+<td class="app-data-table__td" style="color: #000;">{{ $shop->products_count }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -13,7 +13,7 @@ class ShopController extends SearchableController
     #[\Override()]
     function getQuery(): Builder
     {
-        return Shop::orderBy('code');
+        return Shop::withCount('products')->orderBy('code');
     }
 
     #[\Override()]
@@ -89,6 +89,24 @@ class ShopController extends SearchableController
         $shop = $this->find($shopCode);
         $shop->delete();
 
-        return redirect()->route('shops.index');
+        return redirect()->route('shops.list');
+    }
+
+    function viewProducts(string $shopCode, ServerRequestInterface $request): View
+    {
+        $shop = $this->find($shopCode);
+        $productController = \resolve(ProductController::class);
+        $criteria = $productController->prepareCriteria($request->getQueryParams());
+        $filterOptions = $productController->getFilterOptions();
+        $query = $shop->products()
+            ->with('category')       // eager load category กัน N+1
+            ->withCount('shops');    // นับจำนวน shop ที่ขาย product นี้
+        $productController->filter($query, $criteria, $filterOptions);
+
+        return view('shops.view-products', [
+            'criteria' => $criteria,
+            'shop' => $shop,
+            'products' => $query->paginate($productController::MAX_ITEMS),
+        ]);
     }
 }

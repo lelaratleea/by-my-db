@@ -54,22 +54,22 @@ class ProductController extends SearchableController
     }
 
     function list(ServerRequestInterface $request): View
-    {
-        $criteria = $this->prepareCriteria($request->getQueryParams());
-        $query = $this->search($criteria)->withCount('shops');
-        return view('products.list', [
-            'criteria' => $criteria,
-            'products' => $query->paginate(static::MAX_ITEMS),
-        ]);
-    }
+{
+    $criteria = $this->prepareCriteria($request->getQueryParams());
+    $query = $this->search($criteria)->withCount('shops')->with('category'); // <-- เพิ่ม with()
+    return view('products.list', [
+        'criteria' => $criteria,
+        'products' => $query->paginate(static::MAX_ITEMS),
+    ]);
+}
 
-    function view(string $productCode): View
-    {
-        $product = $this->find($productCode);
-        return view('products.view', [
-            'product' => $product,
-        ]);
-    }
+function view(string $productCode): View
+{
+    $product = Product::with('category')->where('code', $productCode)->firstOrFail(); // <-- eager load
+    return view('products.view', [
+        'product' => $product,
+    ]);
+}
 
     function viewShops(string $productCode, ServerRequestInterface $request): View
     {

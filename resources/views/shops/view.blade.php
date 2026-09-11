@@ -6,9 +6,15 @@
 @section('header')
 <form action="{{ route('shops.delete', ['shop' => $shop->code]) }}" method="post" id="app-form-delete">
     @csrf
+    @method('delete')
 </form>
 
 <ul class="app-action-links">
+    <li>
+        <a href="{{ route('shops.view-products', ['shop' => $shop->code]) }}" class="app-action-links__view-shops">
+            View Products
+        </a>
+    </li>
     <li>
         <a href="{{ route('shops.update-form', ['shop' => $shop->code]) }}" class="app-action-links__update">
             Update
