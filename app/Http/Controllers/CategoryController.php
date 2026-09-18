@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
-use App\Models\Category;
 
 class CategoryController extends SearchableController
 {
@@ -42,6 +44,9 @@ class CategoryController extends SearchableController
         $productController = \resolve(ProductController::class);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
         $filterOptions = $productController->getFilterOptions();
+        // categories.view-products ห้ามค้นหาด้วยชื่อ category (ตัดตัวเลือกนี้ออก)
+        unset($filterOptions['term']['category']);
+
         $query = $category->products()->withCount('shops');
         $productController->filter($query, $criteria, $filterOptions);
 
@@ -50,6 +55,60 @@ class CategoryController extends SearchableController
             'category' => $category,
             'products' => $query->paginate($productController::MAX_ITEMS),
         ]);
+    }
+
+    function filterOutProductByCategory(
+        Builder|Relation $productQuery,
+        Category $category,
+    ): void {
+        $productQuery->whereDoesntHave(
+            'category',
+            static function (Builder $categoryQuery) use ($category): void {
+                $categoryQuery->where('code', $category->code);
+            },
+        );
+    }
+
+    function showAddProductsForm(
+        string $categoryCode,
+        ServerRequestInterface $request,
+    ): View {
+        $category = $this->find($categoryCode);
+        $productController = \resolve(ProductController::class);
+        $criteria = $productController->prepareCriteria($request->getQueryParams());
+        $filterOptions = $productController->getFilterOptions();
+
+        $productQuery = $productController->getQuery()
+            ->with('category')
+            ->withCount('shops');
+        $this->filterOutProductByCategory($productQuery, $category);
+        $productController->filter($productQuery, $criteria, $filterOptions);
+
+        return view('categories.add-products-form', [
+            'criteria' => $criteria,
+            'category' => $category,
+            'products' => $productQuery->paginate($productController::MAX_ITEMS),
+        ]);
+    }
+
+    function addProduct(
+        string $categoryCode,
+        ServerRequestInterface $request,
+    ): RedirectResponse {
+        $category = $this->find($categoryCode);
+        $productController = \resolve(ProductController::class);
+        $data = $request->getParsedBody();
+
+        $productQuery = $productController->getQuery();
+        $this->filterOutProductByCategory($productQuery, $category);
+
+        $product = $productQuery->where('code', $data['product'])->firstOrFail();
+
+        // "เพิ่มสินค้า" เข้าหมวดหมู่ = เปลี่ยน category ของสินค้านั้น
+        $product->category()->associate($category);
+        $product->save();
+
+        return redirect()->back();
     }
 
     function showCreateForm(): View

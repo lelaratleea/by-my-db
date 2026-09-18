@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Shop;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
-use App\Models\Shop;
 
 class ShopController extends SearchableController
 {
@@ -108,5 +110,71 @@ class ShopController extends SearchableController
             'shop' => $shop,
             'products' => $query->paginate($productController::MAX_ITEMS),
         ]);
+    }
+
+    function filterOutProductByShop(
+        Builder|Relation $productQuery,
+        Shop $shop,
+    ): void {
+        $productQuery->whereDoesntHave(
+            'shops',
+            static function (Builder $shopQuery) use ($shop): void {
+                $shopQuery->where('code', $shop->code);
+            },
+        );
+    }
+
+    function showAddProductsForm(
+        string $shopCode,
+        ServerRequestInterface $request,
+    ): View {
+        $shop = $this->find($shopCode);
+        $productController = \resolve(ProductController::class);
+        $criteria = $productController->prepareCriteria($request->getQueryParams());
+        $filterOptions = $productController->getFilterOptions();
+
+        $productQuery = $productController->getQuery()
+            ->with('category')
+            ->withCount('shops');
+        $this->filterOutProductByShop($productQuery, $shop);
+        $productController->filter($productQuery, $criteria, $filterOptions);
+
+        return view('shops.add-products-form', [
+            'criteria' => $criteria,
+            'shop' => $shop,
+            'products' => $productQuery->paginate($productController::MAX_ITEMS),
+        ]);
+    }
+
+    function addProduct(
+        string $shopCode,
+        ServerRequestInterface $request,
+    ): RedirectResponse {
+        $shop = $this->find($shopCode);
+        $productController = \resolve(ProductController::class);
+        $data = $request->getParsedBody();
+
+        $productQuery = $productController->getQuery();
+        $this->filterOutProductByShop($productQuery, $shop);
+
+        $product = $productQuery->where('code', $data['product'])->firstOrFail();
+
+        $shop->products()->attach($product);
+
+        return redirect()->back();
+    }
+
+    function removeProduct(
+        string $shopCode,
+        ServerRequestInterface $request,
+    ): RedirectResponse {
+        $shop = $this->find($shopCode);
+        $data = $request->getParsedBody();
+
+        $product = $shop->products()->where('code', $data['product'])->firstOrFail();
+
+        $shop->products()->detach($product);
+
+        return redirect()->back();
     }
 }

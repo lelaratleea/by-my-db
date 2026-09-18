@@ -22,6 +22,12 @@
     </form>
 </search>
 
+<form action="{{ route('products.remove-shop', [
+    'product' => $product->code,
+]) }}" id="app-form-remove-shop" method="post">
+    @csrf
+</form>
+
 <div class="app-cmp-links-bar">
     <nav>
         <ul class="app-cmp-links">
@@ -29,6 +35,11 @@
                 <a href="{{ route('products.view', [
                     'product' => $product->code,
                 ]) }}">&lt; Back</a>
+            </li>
+            <li>
+                <a href="{{ route('products.add-shops-form', [
+                    'product' => $product->code,
+                ]) }}">Add Shops</a>
             </li>
         </ul>
     </nav>
@@ -48,23 +59,27 @@
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
                     <th class="app-data-table__th">Owner</th>
                     <th class="app-data-table__th">No. of Products</th>
+                    <th class="app-data-table__th"></th>
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
                 @foreach($shops as $shop)
                     <tr class="app-data-table__row">
                         <td class="app-data-table__td app-data-table__td--code">
-                            <a href="{{ route('shops.view', [
-                                'shop' => $shop->code,
-                            ]) }}" class="app-data-table__link">
-                                {{ $shop->code }}
-                            </a>
+                            {{ $shop->code }}
                         </td>
                         <td class="app-data-table__td app-data-table__td--name">
                             {{ $shop->name }}
                         </td>
                         <td class="app-data-table__td">{{ $shop->owner }}</td>
                         <td class="app-data-table__td">{{ $shop->products_count }}</td>
+                        <td class="app-data-table__td">
+                            <button type="submit"
+                                form="app-form-remove-shop"
+                                name="shop" value="{{ $shop->code }}">
+                                Remove
+                            </button>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

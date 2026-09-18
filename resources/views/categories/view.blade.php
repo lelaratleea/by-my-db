@@ -5,10 +5,14 @@
 @section('header')
 <form action="{{ route('categories.delete', ['category' => $category->code]) }}" method="post" id="app-form-delete">
     @csrf
+    @method('DELETE')
 </form>
 <ul class="app-action-links">
     <li>
         <a href="{{ route('categories.view-products', ['category' => $category->code]) }}" class="app-action-links__view-shops">View Products</a>
+    </li>
+    <li>
+        <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>
     </li>
     <li>
         <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>

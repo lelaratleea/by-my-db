@@ -17,6 +17,12 @@ Route::controller(CategoryController::class)
         Route::post('/{category}', 'update')->name('update');
         Route::delete('/{category}', 'delete')->name('delete');
         Route::get('/{category}/products', 'viewProducts')->name('view-products');
+
+        Route::prefix('/{category}/products')
+            ->group(function () {
+                Route::get('/add', 'showAddProductsForm')->name('add-products-form');
+                Route::post('/add', 'addProduct')->name('add-product');
+            });
     });
 
 Route::controller(ProductController::class)
@@ -30,7 +36,14 @@ Route::controller(ProductController::class)
         Route::get('/{product}/update', 'showUpdateForm')->name('update-form');
         Route::post('/{product}', 'update')->name('update');
         Route::delete('/{product}', 'delete')->name('delete');
-        Route::get('/{product}/shops', 'viewShops')->name('view-shops');
+
+        Route::prefix('/{product}/shops')
+            ->group(function () {
+                Route::get('/', 'viewShops')->name('view-shops');
+                Route::post('/', 'addShop')->name('add-shop');
+                Route::get('/add', 'showAddShopsForm')->name('add-shops-form');
+                Route::post('/remove', 'removeShop')->name('remove-shop');
+            });
     });
 
 Route::controller(ShopController::class)
@@ -45,4 +58,11 @@ Route::controller(ShopController::class)
         Route::post('/{shop}', 'update')->name('update');
         Route::delete('/{shop}', 'delete')->name('delete');
         Route::get('/{shop}/products', 'viewProducts')->name('view-products');
+
+        Route::prefix('/{shop}/products')
+            ->group(function () {
+                Route::get('/add', 'showAddProductsForm')->name('add-products-form');
+                Route::post('/add', 'addProduct')->name('add-product');
+                Route::post('/remove', 'removeProduct')->name('remove-product');
+            });
     });

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Psr\Http\Message\ServerRequestInterface;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use App\Models\Product;
+use Illuminate\View\View;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ProductController extends SearchableController
 {
@@ -21,109 +21,212 @@ class ProductController extends SearchableController
     function prepareCriteria(array $criteria): array
     {
         return [
+            'minPrice' => null,
+            'maxPrice' => null,
             ...parent::prepareCriteria($criteria),
-            'minPrice' => (($criteria['minPrice'] ?? null) === null)
-                ? null
-                : (float) $criteria['minPrice'],
-            'maxPrice' => (($criteria['maxPrice'] ?? null) === null)
-                ? null
-                : (float) $criteria['maxPrice'],
         ];
     }
 
-    function filterByMinPrice(Builder|Relation $query, float $minPrice): void
+    #[\Override()]
+    function getFilterOptions(): array
     {
-        $query->where('price', '>=', $minPrice);
-    }
-
-    function filterByMaxPrice(Builder|Relation $query, float $maxPrice): void
-    {
-        $query->where('price', '<=', $maxPrice);
+        return [
+            'term' => [
+                ...parent::getFilterOptions()['term'], // code, name
+                'category' => static fn(Builder $query, string $word)
+                    => $query->whereHas(
+                        'category',
+                        static fn(Builder $categoryQuery)
+                            => $categoryQuery->where('name', 'LIKE', "%{$word}%"),
+                    ),
+            ],
+        ];
     }
 
     #[\Override()]
-    function filter(Builder|Relation $query, array $criteria, array $filterOptions): void
-    {
+    function filter(
+        Builder|Relation $query, array $criteria,
+        array $filterOptions,
+    ): void {
         parent::filter($query, $criteria, $filterOptions);
-        if ($criteria['minPrice'] !== null) {
-            $this->filterByMinPrice($query, $criteria['minPrice']);
+
+        if ($criteria['minPrice'] !== null && $criteria['minPrice'] !== '') {
+            $query->where('price', '>=', $criteria['minPrice']);
         }
-        if ($criteria['maxPrice'] !== null) {
-            $this->filterByMaxPrice($query, $criteria['maxPrice']);
+
+        if ($criteria['maxPrice'] !== null && $criteria['maxPrice'] !== '') {
+            $query->where('price', '<=', $criteria['maxPrice']);
         }
     }
 
     function list(ServerRequestInterface $request): View
-{
-    $criteria = $this->prepareCriteria($request->getQueryParams());
-    $query = $this->search($criteria)->withCount('shops')->with('category'); // <-- เพิ่ม with()
-    return view('products.list', [
-        'criteria' => $criteria,
-        'products' => $query->paginate(static::MAX_ITEMS),
-    ]);
-}
+    {
+        $criteria = $this->prepareCriteria($request->getQueryParams());
+        $query = $this->search($criteria)
+            ->with('category')
+            ->withCount('shops');
 
-function view(string $productCode): View
-{
-    $product = Product::with('category')->where('code', $productCode)->firstOrFail(); // <-- eager load
-    return view('products.view', [
-        'product' => $product,
-    ]);
-}
+        return view('products.list', [
+            'criteria' => $criteria,
+            'products' => $query->paginate(static::MAX_ITEMS),
+        ]);
+    }
 
-    function viewShops(string $productCode, ServerRequestInterface $request): View
+    function view(string $productCode): View
     {
         $product = $this->find($productCode);
-        $shopController = \resolve(ShopController::class);
-        $criteria = $shopController->prepareCriteria($request->getQueryParams());
-        $filterOptions = $shopController->getFilterOptions();
-        $query = $product->shops()->withCount('products');
-        $shopController->filter($query, $criteria, $filterOptions);
 
-        return view('products.view-shops', [
-            'criteria' => $criteria,
+        return view('products.view', [
             'product' => $product,
-            'shops' => $query->paginate($shopController::MAX_ITEMS),
         ]);
     }
 
     function showCreateForm(): View
     {
-        return view('products.create-form');
-    }
+        $categories = \resolve(CategoryController::class)->getQuery()->get();
 
-    function create(ServerRequestInterface $request): RedirectResponse
-    {
-        $product = Product::create($request->getParsedBody());
-        return redirect()->route('products.view', [
-            'product' => $product->code,
+        return view('products.create-form', [
+            'categories' => $categories,
         ]);
     }
+
+function create(ServerRequestInterface $request): RedirectResponse
+{
+    $data = $request->getParsedBody();
+    $category = \resolve(CategoryController::class)->find($data['category']);
+
+    $product = new Product();
+    $product->fill(\Illuminate\Support\Arr::only($data, [
+        'code', 'name', 'price', 'description',
+    ]));
+    $product->category()->associate($category);
+    $product->save();
+
+    return redirect()->route('products.view', [
+        'product' => $product->code,
+    ]);
+}
 
     function showUpdateForm(string $productCode): View
     {
         $product = $this->find($productCode);
+        $categories = \resolve(CategoryController::class)->getQuery()->get();
+
         return view('products.update-form', [
             'product' => $product,
+            'categories' => $categories,
         ]);
     }
 
-    function update(
+function update(
+    string $productCode,
+    ServerRequestInterface $request,
+): RedirectResponse {
+    $product = $this->find($productCode);
+    $data = $request->getParsedBody();
+    $category = \resolve(CategoryController::class)->find($data['category']);
+
+    $product->fill(\Illuminate\Support\Arr::only($data, [
+        'code', 'name', 'price', 'description',
+    ]));
+    $product->category()->associate($category);
+    $product->save();
+
+    return redirect()->route('products.view', [
+        'product' => $product->code,
+    ]);
+}
+
+    function delete(string $productCode): RedirectResponse
+    {
+        $product = $this->find($productCode);
+        $product->delete();
+
+        return redirect()->route('products.list');
+    }
+
+    // ==========================================
+    // Shop relationship — จาก Lecture 10
+    // ==========================================
+
+    function viewShops(
+        string $productCode,
+        ServerRequestInterface $request,
+    ): View {
+        $product = $this->find($productCode);
+        $shopController = \resolve(ShopController::class);
+        $criteria = $shopController->prepareCriteria($request->getQueryParams());
+
+        $shopQuery = $product->shops()->withCount('products');
+
+        return view('products.view-shops', [
+            'criteria' => $criteria,
+            'product' => $product,
+            'shops' => $shopQuery->paginate($shopController::MAX_ITEMS),
+        ]);
+    }
+
+    function filterOutShopByProduct(
+        Builder|Relation $shopQuery,
+        Product $product,
+    ): void {
+        $shopQuery->whereDoesntHave(
+            'products',
+            static function (Builder $productQuery) use ($product): void {
+                $productQuery->where('code', $product->code);
+            },
+        );
+    }
+
+    function showAddShopsForm(
+        string $productCode,
+        ServerRequestInterface $request,
+    ): View {
+        $product = $this->find($productCode);
+        $shopController = \resolve(ShopController::class);
+        $criteria = $shopController->prepareCriteria($request->getQueryParams());
+
+        $shopQuery = $shopController->getQuery()->withCount('products');
+        $this->filterOutShopByProduct($shopQuery, $product);
+
+        return view('products.add-shops-form', [
+            'criteria' => $criteria,
+            'product' => $product,
+            'shops' => $shopQuery->paginate($shopController::MAX_ITEMS),
+        ]);
+    }
+
+    function addShop(
         string $productCode,
         ServerRequestInterface $request,
     ): RedirectResponse {
         $product = $this->find($productCode);
-        $product->fill($request->getParsedBody());
-        $product->save();
-        return redirect()->route('products.view', [
-            'product' => $product->code,
-        ]);
+        $shopController = \resolve(ShopController::class);
+        $data = $request->getParsedBody();
+
+        $shopQuery = $shopController->getQuery();
+        $this->filterOutShopByProduct($shopQuery, $product);
+
+        $shop = $shopQuery
+            ->where('code', $data['shop'])
+            ->firstOrFail();
+
+        $product->shops()->attach($shop);
+
+        return redirect()->back();
     }
 
-    function delete(string $productCode): RedirectResponse
-{
-    $product = $this->find($productCode);
-    $product->delete();
-    return redirect()->route('products.list');   // เปลี่ยนจาก products.index เป็น products.list
-}
+    function removeShop(
+        string $productCode,
+        ServerRequestInterface $request,
+    ): RedirectResponse {
+        $product = $this->find($productCode);
+        $data = $request->getParsedBody();
+
+        $shop = $product->shops()->where('code', $data['shop'])->firstOrFail();
+
+        $product->shops()->detach($shop);
+
+        return redirect()->back();
+    }
 }

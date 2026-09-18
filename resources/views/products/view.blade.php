@@ -3,13 +3,15 @@
 ])
 
 @section('header')
+
 <nav>
-    <form action="{{ route('products.delete', [
-        'product' => $product->code,
+<form action="{{ route('products.delete', [
+    'product' => $product->code,
     ]) }}" method="post"
-        id="app-form-delete">
-        @csrf
-    </form>
+    id="app-form-delete">
+    @csrf
+    @method('DELETE')
+</form>
 <ul class="app-action-links">
     <li>
         <a href="{{ route('products.view-shops', [

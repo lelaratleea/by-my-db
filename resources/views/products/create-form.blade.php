@@ -1,10 +1,7 @@
-{{-- ... Other template directives --}}
-
 @extends('products.main', [
     'title' => 'Create',
 ])
 
-{{-- ... Other template directives --}}
 @section('content')
 <section class="app-form-section">
     <form action="{{ route('products.create') }}" method="post" class="app-form">
@@ -16,6 +13,17 @@
         <div class="app-form__field">
             <label class="app-form__label">Name</label>
             <input type="text" name="name" class="app-form__input" required />
+        </div>
+        <div class="app-form__field">
+            <label class="app-form__label">Category</label>
+            <select name="category" class="app-form__input" required>
+                <option value="" selected disabled>--- Please Select Category ---</option>
+                @foreach($categories as $category)
+                    <option value="{{ $category->code }}">
+                        [{{ $category->code }}] {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         <div class="app-form__field">
             <label class="app-form__label">Price</label>

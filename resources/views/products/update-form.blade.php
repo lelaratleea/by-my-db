@@ -1,5 +1,3 @@
-{{-- ... Other templates directive --}}
-
 @extends('products.main', [
     'title' => $product->code,
 ])
@@ -17,6 +15,17 @@
         <div class="app-form__field">
             <label class="app-form__label">Name</label>
             <input type="text" name="name" value="{{ $product->name }}" class="app-form__input" required />
+        </div>
+        <div class="app-form__field">
+            <label class="app-form__label">Category</label>
+            <select name="category" class="app-form__input" required>
+                @foreach($categories as $category)
+                    <option value="{{ $category->code }}"
+                        @selected($category->code === $product->category->code)>
+                        [{{ $category->code }}] {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         <div class="app-form__field">
             <label class="app-form__label">Price</label>
