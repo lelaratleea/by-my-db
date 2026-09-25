@@ -181,7 +181,9 @@ class ProductController extends SearchableController
 
         $shopQuery = $product->shops()->withCount('products');
 
-        session()->put('bookmarks.products.view-shops', url()->full());
+        // หน้านี้มีลิงก์ไป add-shops-form ต้อง bookmark URL ของตัวเอง
+        // ให้ปุ่ม Back ของ add-shops-form ใช้กลับมา
+        session()->put('bookmarks.products.add-shops-form', url()->full());
 
         return view('products.view-shops', [
             'criteria' => $criteria,
@@ -212,8 +214,6 @@ class ProductController extends SearchableController
 
         $shopQuery = $shopController->getQuery()->withCount('products');
         $this->filterOutShopByProduct($shopQuery, $product);
-
-        session()->put('bookmarks.products.add-shops-form', url()->full());
 
         return view('products.add-shops-form', [
             'criteria' => $criteria,
