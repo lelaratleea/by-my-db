@@ -32,9 +32,10 @@
     <nav>
         <ul class="app-cmp-links">
             <li>
-                <a href="{{ route('products.view', [
-                    'product' => $product->code,
-                ]) }}">&lt; Back</a>
+                <a href="{{
+                    session()->get('bookmarks.products.view-shops') ??
+                    route('products.view', ['product' => $product->code])
+                }}">&lt; Back</a>
             </li>
             <li>
                 <a href="{{ route('products.add-shops-form', [
@@ -63,6 +64,9 @@
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
+                @php
+                    session()->put('bookmarks.shops.view', url()->full());
+                @endphp
                 @foreach($shops as $shop)
                     <tr class="app-data-table__row">
                         <td class="app-data-table__td app-data-table__td--code">

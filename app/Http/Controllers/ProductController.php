@@ -90,22 +90,32 @@ class ProductController extends SearchableController
         ]);
     }
 
-function create(ServerRequestInterface $request): RedirectResponse
-{
-    $data = $request->getParsedBody();
-    $category = \resolve(CategoryController::class)->find($data['category']);
+    function create(ServerRequestInterface $request): RedirectResponse
+    {
+        $data = $request->getParsedBody();
+        $category = \resolve(CategoryController::class)->find($data['category']);
 
-    $product = new Product();
-    $product->fill(\Illuminate\Support\Arr::only($data, [
-        'code', 'name', 'price', 'description',
-    ]));
-    $product->category()->associate($category);
-    $product->save();
+        $product = new Product();
+        $product->fill(\Illuminate\Support\Arr::only($data, [
+            'code', 'name', 'price', 'description',
+        ]));
+        $product->category()->associate($category);
+        $product->save();
 
-    return redirect()->route('products.view', [
-        'product' => $product->code,
-    ]);
-}
+        if (session()->has('bookmarks.products.create')) {
+            session()->put(
+                'bookmarks.products.view',
+                session()->get('bookmarks.products.create'),
+            );
+        }
+        session()->forget('bookmarks.products.create');
+
+        return redirect()
+            ->route('products.view', [
+                'product' => $product->code,
+            ])
+            ->with('status', "Product {$product->code} was created.");
+    }
 
     function showUpdateForm(string $productCode): View
     {
@@ -118,31 +128,43 @@ function create(ServerRequestInterface $request): RedirectResponse
         ]);
     }
 
-function update(
-    string $productCode,
-    ServerRequestInterface $request,
-): RedirectResponse {
-    $product = $this->find($productCode);
-    $data = $request->getParsedBody();
-    $category = \resolve(CategoryController::class)->find($data['category']);
+    function update(
+        string $productCode,
+        ServerRequestInterface $request,
+    ): RedirectResponse {
+        $product = $this->find($productCode);
+        $data = $request->getParsedBody();
+        $category = \resolve(CategoryController::class)->find($data['category']);
 
-    $product->fill(\Illuminate\Support\Arr::only($data, [
-        'code', 'name', 'price', 'description',
-    ]));
-    $product->category()->associate($category);
-    $product->save();
+        $product->fill(\Illuminate\Support\Arr::only($data, [
+            'code', 'name', 'price', 'description',
+        ]));
+        $product->category()->associate($category);
+        $product->save();
 
-    return redirect()->route('products.view', [
-        'product' => $product->code,
-    ]);
-}
+        if (session()->has('bookmarks.products.update')) {
+            session()->put(
+                'bookmarks.products.view',
+                session()->get('bookmarks.products.update'),
+            );
+        }
+        session()->forget('bookmarks.products.update');
+
+        return redirect()
+            ->route('products.view', [
+                'product' => $product->code,
+            ])
+            ->with('status', "Product {$product->code} was updated.");
+    }
 
     function delete(string $productCode): RedirectResponse
     {
         $product = $this->find($productCode);
         $product->delete();
 
-        return redirect()->route('products.list');
+        return redirect(
+            session()->get('bookmarks.products.delete') ?? route('products.list')
+        )->with('status', "Product {$product->code} was deleted.");
     }
 
     // ==========================================
@@ -158,6 +180,8 @@ function update(
         $criteria = $shopController->prepareCriteria($request->getQueryParams());
 
         $shopQuery = $product->shops()->withCount('products');
+
+        session()->put('bookmarks.products.view-shops', url()->full());
 
         return view('products.view-shops', [
             'criteria' => $criteria,
@@ -189,6 +213,8 @@ function update(
         $shopQuery = $shopController->getQuery()->withCount('products');
         $this->filterOutShopByProduct($shopQuery, $product);
 
+        session()->put('bookmarks.products.add-shops-form', url()->full());
+
         return view('products.add-shops-form', [
             'criteria' => $criteria,
             'product' => $product,
@@ -213,7 +239,9 @@ function update(
 
         $product->shops()->attach($shop);
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('status', "Shop {$shop->code} was added to Product {$product->code}.");
     }
 
     function removeShop(
@@ -227,6 +255,8 @@ function update(
 
         $product->shops()->detach($shop);
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('status', "Shop {$shop->code} was removed from Product {$product->code}.");
     }
 }

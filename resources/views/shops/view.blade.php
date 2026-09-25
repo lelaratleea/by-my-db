@@ -1,5 +1,5 @@
 {{-- shops/view.blade.php --}}
-@extends('Shops.main', [
+@extends('shops.main', [
     'title' => $shop->name,
 ])
 
@@ -10,6 +10,12 @@
 </form>
 
 <ul class="app-action-links">
+    <li>
+        <a href="{{
+            session()->get('bookmarks.shops.view') ??
+            route('shops.list')
+        }}" class="app-action-links__back">&lt; Back</a>
+    </li>
     <li>
         <a href="{{ route('shops.view-products', ['shop' => $shop->code]) }}" class="app-action-links__view-shops">
             View Products

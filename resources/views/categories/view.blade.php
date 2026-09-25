@@ -9,10 +9,13 @@
 </form>
 <ul class="app-action-links">
     <li>
-        <a href="{{ route('categories.view-products', ['category' => $category->code]) }}" class="app-action-links__view-shops">View Products</a>
+        <a href="{{
+            session()->get('bookmarks.categories.view') ??
+            route('categories.list')
+        }}" class="app-action-links__back">&lt; Back</a>
     </li>
     <li>
-        <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>
+        <a href="{{ route('categories.view-products', ['category' => $category->code]) }}" class="app-action-links__view-shops">View Products</a>
     </li>
     <li>
         <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>

@@ -1,5 +1,5 @@
 {{-- shops/update-form.blade.php --}}
-@extends('Shops.main', [
+@extends('shops.main', [
     'title' => $shop->code,
 ])
 
@@ -38,7 +38,13 @@
                 <textarea class="app-form__textarea" id="address" name="address" cols="80" rows="10" required>{{ $shop->address }}</textarea>
             </div>
 
-            <button type="submit" class="app-form__submit">Update</button>
+            <div class="app-form__actions">
+                <button type="submit" class="app-form__submit">Update</button>
+                <a href="{{
+                    session()->get('bookmarks.shops.update-form') ??
+                    route('shops.view', ['shop' => $shop->code])
+                }}" class="app-form__cancel">Cancel</a>
+            </div>
         </form>
     </section>
 @endsection

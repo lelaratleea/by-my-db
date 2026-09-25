@@ -1,5 +1,5 @@
 {{-- shops/create-form.blade.php --}}
-@extends('Shops.main', [
+@extends('shops.main', [
     'title' => 'Create',
 ])
 
@@ -38,7 +38,13 @@
                 <textarea class="app-form__textarea" id="address" name="address" cols="80" rows="10" required></textarea>
             </div>
 
-            <button type="submit" class="app-form__submit">Create</button>
+            <div class="app-form__actions">
+                <button type="submit" class="app-form__submit">Create</button>
+                <a href="{{
+                    session()->get('bookmarks.shops.create-form') ??
+                    route('shops.list')
+                }}" class="app-form__cancel">Cancel</a>
+            </div>
         </form>
     </section>
 @endsection

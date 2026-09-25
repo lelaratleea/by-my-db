@@ -33,7 +33,13 @@
             <label class="app-form__label">Description</label>
             <textarea name="description" class="app-form__textarea" cols="80" rows="10" required></textarea>
         </div>
-        <button type="submit" class="app-form__submit">Create</button>
+        <div class="app-form__actions">
+            <button type="submit" class="app-form__submit">Create</button>
+            <a href="{{
+                session()->get('bookmarks.products.create-form') ??
+                route('products.list')
+            }}" class="app-form__cancel">Cancel</a>
+        </div>
     </form>
 </section>
 @endsection

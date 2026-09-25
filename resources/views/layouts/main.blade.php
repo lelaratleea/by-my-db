@@ -21,6 +21,11 @@
         <h1 class="app-cmp-content-header__title">
             @section('title'){{ $title }}@show
         </h1>
+        <div class="app-cmp-notifications">
+            @session('status')
+                <div role="status" class="app-cmp-notifications__message">{{ $value }}</div>
+            @endsession
+        </div>
         @yield('header')
     </header>
     @yield('content')

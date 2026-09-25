@@ -19,6 +19,14 @@
     </form>
 </search>
 
+@php
+    session()->put('bookmarks.categories.create-form', url()->full());
+    session()->put(
+        'bookmarks.categories.create',
+        session()->get('bookmarks.categories.create-form'),
+    );
+@endphp
+
 <div class="app-cmp-links-bar">
     <nav>
         <ul class="app-cmp-links">
@@ -45,6 +53,9 @@
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
+                @php
+                    session()->put('bookmarks.categories.view', url()->full());
+                @endphp
                 @foreach($categories as $category)
                     <tr class="app-data-table__row">
                         <td class="app-data-table__td app-data-table__td--code">

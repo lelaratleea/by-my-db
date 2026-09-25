@@ -28,6 +28,14 @@
     </form>
 </search>
 
+@php
+    session()->put('bookmarks.products.create-form', url()->full());
+    session()->put(
+        'bookmarks.products.create',
+        session()->get('bookmarks.products.create-form'),
+    );
+@endphp
+
 <div class="app-cmp-links-bar">
     <nav>
         <ul class="app-cmp-links">
@@ -57,6 +65,10 @@
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
+                @php
+                    session()->put('bookmarks.products.view', url()->full());
+                    session()->put('bookmarks.categories.view', url()->full());
+                @endphp
                 @foreach($products as $product)
                     <tr class="app-data-table__row">
                         <td class="app-data-table__td app-data-table__td--code">
@@ -71,11 +83,13 @@
                         </td>
                         <td class="app-data-table__td">
                             @if($product->category)
-        <a href="{{ route('categories.view', ['category' => $product->category->code]) }}" class="app-data-table__link">
-            {{ $product->category->name }}
-        </a>
-    @endif
-</td>
+                                <a href="{{ route('categories.view', [
+                                    'category' => $product->category->code,
+                                ]) }}" class="app-data-table__link">
+                                    {{ $product->category->name }}
+                                </a>
+                            @endif
+                        </td>
                         <td class="app-data-table__td">{{ number_format($product->price, 2) }}</td>
                         <td class="app-data-table__td">{{ $product->shops_count }}</td>
                     </tr>

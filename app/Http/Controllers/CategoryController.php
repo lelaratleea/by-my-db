@@ -33,6 +33,22 @@ class CategoryController extends SearchableController
     {
         $category = $this->find($categoryCode);
 
+        // Route categories.view bookmarks its own URL for update-form and
+        // view-products back links.
+        session()->put('bookmarks.categories.update-form', url()->full());
+        session()->put('bookmarks.categories.view-products', url()->full());
+
+        // Forward: categories.update and categories.delete use the same
+        // back link location as categories.view itself.
+        session()->put(
+            'bookmarks.categories.update',
+            session()->get('bookmarks.categories.view'),
+        );
+        session()->put(
+            'bookmarks.categories.delete',
+            session()->get('bookmarks.categories.view'),
+        );
+
         return view('categories.view', [
             'category' => $category,
         ]);
@@ -49,6 +65,10 @@ class CategoryController extends SearchableController
 
         $query = $category->products()->withCount('shops');
         $productController->filter($query, $criteria, $filterOptions);
+
+        // Route categories.view-products bookmarks its own URL for
+        // categories.add-products-form back link.
+        session()->put('bookmarks.categories.add-products-form', url()->full());
 
         return view('categories.view-products', [
             'criteria' => $criteria,
@@ -108,7 +128,9 @@ class CategoryController extends SearchableController
         $product->category()->associate($category);
         $product->save();
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('status', "Product {$product->code} was added to Category {$category->code}.");
     }
 
     function showCreateForm(): View
@@ -120,9 +142,19 @@ class CategoryController extends SearchableController
     {
         $category = Category::create($request->getParsedBody());
 
-        return redirect()->route('categories.view', [
-            'category' => $category->code,
-        ]);
+        if (session()->has('bookmarks.categories.create')) {
+            session()->put(
+                'bookmarks.categories.view',
+                session()->get('bookmarks.categories.create'),
+            );
+        }
+        session()->forget('bookmarks.categories.create');
+
+        return redirect()
+            ->route('categories.view', [
+                'category' => $category->code,
+            ])
+            ->with('status', "Category {$category->code} was created.");
     }
 
     function showUpdateForm(string $categoryCode): View
@@ -142,16 +174,30 @@ class CategoryController extends SearchableController
         $category->fill($request->getParsedBody());
         $category->save();
 
-        return redirect()->route('categories.view', [
-            'category' => $category->code,
-        ]);
+        if (session()->has('bookmarks.categories.update')) {
+            session()->put(
+                'bookmarks.categories.view',
+                session()->get('bookmarks.categories.update'),
+            );
+        }
+        session()->forget('bookmarks.categories.update');
+
+        return redirect()
+            ->route('categories.view', [
+                'category' => $category->code,
+            ])
+            ->with('status', "Category {$category->code} was updated.");
     }
 
     function delete(string $categoryCode): RedirectResponse
     {
         $category = $this->find($categoryCode);
+        $code = $category->code;
         $category->delete();
 
-        return redirect()->route('categories.list');
+        return redirect(
+            session()->get('bookmarks.categories.delete')
+                ?? route('categories.list')
+        )->with('status', "Category {$code} was deleted.");
     }
 }

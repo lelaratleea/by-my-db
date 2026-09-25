@@ -45,6 +45,22 @@ class ShopController extends SearchableController
     {
         $shop = $this->find($shopCode);
 
+        // Route shops.view bookmarks its own URL for update-form and
+        // view-products back links.
+        session()->put('bookmarks.shops.update-form', url()->full());
+        session()->put('bookmarks.shops.view-products', url()->full());
+
+        // Forward: shops.update and shops.delete use the same back link
+        // location as shops.view itself.
+        session()->put(
+            'bookmarks.shops.update',
+            session()->get('bookmarks.shops.view'),
+        );
+        session()->put(
+            'bookmarks.shops.delete',
+            session()->get('bookmarks.shops.view'),
+        );
+
         return view('shops.view', [
             'shop' => $shop,
         ]);
@@ -59,9 +75,19 @@ class ShopController extends SearchableController
     {
         $shop = Shop::create($request->getParsedBody());
 
-        return redirect()->route('shops.view', [
-            'shop' => $shop->code,
-        ]);
+        if (session()->has('bookmarks.shops.create')) {
+            session()->put(
+                'bookmarks.shops.view',
+                session()->get('bookmarks.shops.create'),
+            );
+        }
+        session()->forget('bookmarks.shops.create');
+
+        return redirect()
+            ->route('shops.view', [
+                'shop' => $shop->code,
+            ])
+            ->with('status', "Shop {$shop->code} was created.");
     }
 
     function showUpdateForm(string $shopCode): View
@@ -81,17 +107,31 @@ class ShopController extends SearchableController
         $shop->fill($request->getParsedBody());
         $shop->save();
 
-        return redirect()->route('shops.view', [
-            'shop' => $shop->code,
-        ]);
+        if (session()->has('bookmarks.shops.update')) {
+            session()->put(
+                'bookmarks.shops.view',
+                session()->get('bookmarks.shops.update'),
+            );
+        }
+        session()->forget('bookmarks.shops.update');
+
+        return redirect()
+            ->route('shops.view', [
+                'shop' => $shop->code,
+            ])
+            ->with('status', "Shop {$shop->code} was updated.");
     }
 
     function delete(string $shopCode): RedirectResponse
     {
         $shop = $this->find($shopCode);
+        $code = $shop->code;
         $shop->delete();
 
-        return redirect()->route('shops.list');
+        return redirect(
+            session()->get('bookmarks.shops.delete')
+                ?? route('shops.view', ['shop' => $code])
+        )->with('status', "Shop {$code} was deleted.");
     }
 
     function viewProducts(string $shopCode, ServerRequestInterface $request): View
@@ -104,6 +144,10 @@ class ShopController extends SearchableController
             ->with('category')       // eager load category กัน N+1
             ->withCount('shops');    // นับจำนวน shop ที่ขาย product นี้
         $productController->filter($query, $criteria, $filterOptions);
+
+        // Route shops.view-products bookmarks its own URL for
+        // shops.add-products-form back link.
+        session()->put('bookmarks.shops.add-products-form', url()->full());
 
         return view('shops.view-products', [
             'criteria' => $criteria,
@@ -161,7 +205,9 @@ class ShopController extends SearchableController
 
         $shop->products()->attach($product);
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('status', "Product {$product->code} was added to Shop {$shop->code}.");
     }
 
     function removeProduct(
@@ -175,6 +221,8 @@ class ShopController extends SearchableController
 
         $shop->products()->detach($product);
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('status', "Product {$product->code} was removed from Shop {$shop->code}.");
     }
 }

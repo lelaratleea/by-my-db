@@ -1,10 +1,11 @@
-/* ===== Toy Story Theme ===== */
+/* ===== Barbie Theme (Multi-color) ===== */
 /*
-   Sky Blue   #5EC8E8  (ท้องฟ้า/navigation)
-   Buzz Green #3A9D5D  (ปุ่มหลัก/update)
-   Buzz Purple #6A3FA0 (view-shops/secondary)
-   Woody Red  #C1272D  (delete/danger)
-   Woody Yellow #FFC72C (highlight/hover accents)
+   Barbie Pink     #FF1493  (ปุ่มหลัก/submit)
+   Lavender Purple #9B5DE5  (nav/secondary/view-shops)
+   Turquoise       #00C2CB  (update/links bar)
+   Barbie Gold     #FFD700  (highlight/active/flash)
+   Coral           #FF6F61  (delete/danger)
+   Blush Pink      #FFE6F2  (background อ่อน)
 */
 
 /* Navigation */
@@ -13,32 +14,32 @@
     justify-content: center;
     gap: 8px;
     padding: 16px 0;
-    background-color: #eaf7fc;
+    background-color: #F2E9FB;
 }
 
 .app-nav-menu__link {
-    border: 2px solid #5EC8E8;
+    border: 2px solid #9B5DE5;
     border-radius: 4px;
     padding: 6px 20px;
     font-weight: bold;
-    color: #1c3a52;
+    color: #5A2E8C;
     text-decoration: none;
     background-color: #fff;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .app-nav-menu__link:hover {
-    background-color: #cdeefb;
+    background-color: #E3D2F9;
 }
 
 .app-nav-menu__link--active {
-    background-color: #FFC72C;
-    border-color: #e0a800;
-    color: #3a2a00;
+    background-color: #FFD700;
+    border-color: #e0b800;
+    color: #4a3200;
 }
 
 .app-nav-menu__link--active:hover {
-    background-color: #f0b800;
+    background-color: #f0c700;
 }
 
 /* Content Header */
@@ -47,7 +48,7 @@
     font-size: 2rem;
     font-weight: bold;
     margin: 24px 0;
-    color: #6A3FA0;
+    color: #FF1493;
 }
 
 /* List Page */
@@ -60,7 +61,7 @@
     font-weight: bold;
     font-size: 1.1rem;
     margin-bottom: 8px;
-    color: #3A9D5D;
+    color: #00A7AF;
 }
 
 .app-data-table {
@@ -73,12 +74,12 @@
 }
 
 .app-data-table__head {
-    background-color: #6A3FA0;
+    background-color: #9B5DE5;
 }
 
 .app-data-table__th {
     padding: 6px 10px;
-    border: 1px solid #4b2b73;
+    border: 1px solid #6d3bb0;
     font-weight: bold;
     color: #fff;
 }
@@ -89,18 +90,18 @@
 
 .app-data-table__td {
     padding: 4px 10px;
-    border: 1px solid #b9c9d6;
+    border: 1px solid #e6d6f7;
 }
 
 .app-data-table__link {
-    color: #3A9D5D;
+    color: #FF1493;
     font-weight: bold;
     text-decoration: none;
 }
 
 .app-data-table__link:hover {
     text-decoration: underline;
-    color: #2c7746;
+    color: #c20f76;
 }
 
 /* Detail/View Page */
@@ -117,7 +118,7 @@
 
 .app-detail-list__term {
     font-weight: bold;
-    color: #6A3FA0;
+    color: #9B5DE5;
 }
 
 .app-detail-list__term::after {
@@ -143,7 +144,7 @@
     text-align: center;
     padding: 16px 0;
     font-size: 0.85rem;
-    color: #5EC8E8;
+    color: #9B5DE5;
 }
 
 /* ===== Search Box ===== */
@@ -153,16 +154,16 @@
 }
 
 .app-cmp-search-form fieldset {
-    border: 1px solid #5EC8E8;
+    border: 1px solid #00C2CB;
     border-radius: 4px;
     padding: 12px 16px;
-    background-color: #f5fbfe;
+    background-color: #E6FBFC;
 }
 
 .app-cmp-search-form legend {
     padding: 0 6px;
     font-weight: bold;
-    color: #1c3a52;
+    color: #007780;
 }
 
 .app-cmp-search-form label {
@@ -181,13 +182,13 @@
 .app-cmp-search-form input[type="text"],
 .app-cmp-search-form input[type="number"] {
     flex: 1;
-    border: 1px solid #5EC8E8;
+    border: 1px solid #00C2CB;
     border-radius: 3px;
     padding: 4px 8px;
 }
 
 .app-cmp-search-form button[type="submit"] {
-    background-color: #3A9D5D;
+    background-color: #00C2CB;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -197,11 +198,11 @@
 }
 
 .app-cmp-search-form button[type="submit"]:hover {
-    background-color: #2c7746;
+    background-color: #009AA1;
 }
 
 .app-cmp-search-form fieldset > a {
-    background-color: #C1272D;
+    background-color: #FF6F61;
     color: #fff;
     border-radius: 4px;
     padding: 6px 20px;
@@ -211,7 +212,7 @@
 }
 
 .app-cmp-search-form fieldset > a:hover {
-    background-color: #971e23;
+    background-color: #e5493a;
 }
 
 /* ===== Links Bar (Create Product + Pagination) ===== */
@@ -233,7 +234,7 @@
 
 .app-cmp-links li a {
     display: inline-block;
-    background-color: #6A3FA0;
+    background-color: #FF1493;
     color: #fff;
     border-radius: 4px;
     padding: 6px 16px;
@@ -242,7 +243,7 @@
 }
 
 .app-cmp-links li a:hover {
-    background-color: #542f80;
+    background-color: #c20f76;
 }
 
 /* ===== Create/Update Form ===== */
@@ -267,17 +268,17 @@
 .app-form__label {
     font-weight: bold;
     padding-top: 6px;
-    color: #6A3FA0;
+    color: #9B5DE5;
 }
 
 .app-form__input {
-    border: 1px solid #5EC8E8;
+    border: 1px solid #00C2CB;
     border-radius: 3px;
     padding: 6px 8px;
 }
 
 .app-form__textarea {
-    border: 1px solid #5EC8E8;
+    border: 1px solid #00C2CB;
     border-radius: 3px;
     padding: 6px 8px;
     font-family: inherit;
@@ -286,7 +287,7 @@
 
 .app-form__submit {
     align-self: flex-start;
-    background-color: #3A9D5D;
+    background-color: #FF1493;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -296,58 +297,107 @@
 }
 
 .app-form__submit:hover {
-    background-color: #2c7746;
+    background-color: #c20f76;
 }
 
 /* ===== Action Links (View Shops / Update / Delete) ===== */
 .app-action-links {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     list-style: none;
     margin: 16px 0;
     padding: 0;
 }
 
-.app-action-links__update {
-    display: inline-block;
-    background-color: #3A9D5D;
-    color: #fff;
-    border-radius: 4px;
-    padding: 6px 20px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.app-action-links__update:hover {
-    background-color: #2c7746;
-}
-
-.app-action-links__view-shops {
-    display: inline-block;
-    background-color: #6A3FA0;
-    color: #fff;
-    border-radius: 4px;
-    padding: 6px 20px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.app-action-links__view-shops:hover {
-    background-color: #542f80;
-}
-
+.app-action-links__back,
+.app-action-links__update,
+.app-action-links__view-shops,
 .app-action-links__delete {
     display: inline-block;
-    background-color: #C1272D;
-    color: #fff;
-    border: none;
     border-radius: 4px;
     padding: 6px 20px;
     font-weight: bold;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: normal;
+    box-sizing: border-box;
+    vertical-align: middle;
+    text-decoration: none;
+    border: none;
     cursor: pointer;
 }
 
+.app-action-links__update {
+    background-color: #00C2CB;
+    color: #fff;
+}
+
+.app-action-links__update:hover {
+    background-color: #009AA1;
+}
+
+.app-action-links__view-shops {
+    background-color: #9B5DE5;
+    color: #fff;
+}
+
+.app-action-links__view-shops:hover {
+    background-color: #7c3dc9;
+}
+
+.app-action-links__delete {
+    background-color: #FF6F61;
+    color: #fff;
+}
+
 .app-action-links__delete:hover {
-    background-color: #971e23;
+    background-color: #e5493a;
+}
+
+/* ===== Flash Notification ===== */
+.app-cmp-notifications {
+    max-width: 800px;
+    margin: 0 auto 16px;
+}
+
+.app-cmp-notifications__message {
+    background-color: #FFF6DA;
+    border: 2px solid #FFD700;
+    border-radius: 4px;
+    padding: 10px 16px;
+    color: #6B4E00;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ===== Back Link (in app-action-links) ===== */
+.app-action-links__back {
+    background-color: #FFD700;
+    color: #4a3200;
+}
+
+.app-action-links__back:hover {
+    background-color: #f0c700;
+}
+
+/* ===== Form Actions (Submit + Cancel) ===== */
+.app-form__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.app-form__cancel {
+    display: inline-block;
+    background-color: #FF6F61;
+    color: #fff;
+    border-radius: 4px;
+    padding: 8px 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.app-form__cancel:hover {
+    background-color: #e5493a;
 }

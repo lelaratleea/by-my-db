@@ -12,7 +12,27 @@
     @csrf
     @method('DELETE')
 </form>
+
+@php
+    session()->put(
+        'bookmarks.products.delete',
+        session()->get('bookmarks.products.view'),
+    );
+    session()->put('bookmarks.products.update-form', url()->full());
+    session()->put(
+        'bookmarks.products.update',
+        session()->get('bookmarks.products.view'),
+    );
+    session()->put('bookmarks.products.view-shops', url()->full());
+@endphp
+
 <ul class="app-action-links">
+    <li>
+        <a href="{{
+            session()->get('bookmarks.products.view') ??
+            route('products.list')
+        }}" class="app-action-links__back">&lt; Back</a>
+    </li>
     <li>
         <a href="{{ route('products.view-shops', [
             'product' => $product->code,

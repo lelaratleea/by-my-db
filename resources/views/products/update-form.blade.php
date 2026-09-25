@@ -39,7 +39,15 @@
                 name="description" class="app-form__textarea" cols="80" rows="10" required
             >{{ $product->description }}</textarea>
         </div>
-        <button type="submit" class="app-form__submit">Update</button>
+        <div class="app-form__actions">
+            <button type="submit" class="app-form__submit">Update</button>
+            <a href="{{
+                session()->get('bookmarks.products.update-form') ??
+                route('products.view', [
+                    'product' => $product->code,
+                ])
+            }}" class="app-form__cancel">Cancel</a>
+        </div>
     </form>
 </section>
 @endsection
