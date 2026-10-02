@@ -3,10 +3,12 @@
 ])
 
 @section('header')
-<form action="{{ route('categories.delete', ['category' => $category->code]) }}" method="post" id="app-form-delete">
-    @csrf
-    @method('DELETE')
-</form>
+@can('delete', $category)
+    <form action="{{ route('categories.delete', ['category' => $category->code]) }}" method="post" id="app-form-delete">
+        @csrf
+        @method('DELETE')
+    </form>
+@endcan
 <ul class="app-action-links">
     <li>
         <a href="{{
@@ -20,9 +22,11 @@
     <li>
         <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>
     </li>
-    <li>
-        <button type="submit" form="app-form-delete" class="app-action-links__delete">Delete</button>
-    </li>
+    @can('delete', $category)
+        <li>
+            <button type="submit" form="app-form-delete" class="app-action-links__delete">Delete</button>
+        </li>
+    @endcan
 </ul>
 @endsection
 

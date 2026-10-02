@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -192,6 +193,8 @@ class CategoryController extends SearchableController
     function delete(string $categoryCode): RedirectResponse
     {
         $category = $this->find($categoryCode);
+        Gate::authorize('delete', $category);
+
         $code = $category->code;
         $category->delete();
 

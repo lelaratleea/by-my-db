@@ -1,5 +1,12 @@
-<link rel="stylesheet" href="{{ asset('css/app.css') }}">
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title }}</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+<body>
 <header id="app-main-header">
     <nav class="app-nav-menu">
         <a href="{{ route('products.list') }}"
@@ -11,10 +18,23 @@
             Shop
         </a>
         <a href="{{ route('categories.list') }}"
-   class="app-nav-menu__link {{ request()->routeIs('categories.*') ? 'app-nav-menu__link--active' : '' }}">
-    Category
-</a>
+           class="app-nav-menu__link {{ request()->routeIs('categories.*') ? 'app-nav-menu__link--active' : '' }}">
+            Category
+        </a>
     </nav>
+
+    @auth
+        <form action="{{ route('logout') }}" method="post" id="app-form-logout">
+            @csrf
+        </form>
+        <ul class="app-cmp-user-panel">
+            <li>{{ \Auth::user()->name }}</li>
+            <li>
+                <button type="submit" form="app-form-logout"
+                        class="app-cmp-user-panel__logout">Logout</button>
+            </li>
+        </ul>
+    @endauth
 </header>
 <main id="app-main-content">
     <header class="app-cmp-content-header">
@@ -33,3 +53,5 @@
 <footer id="app-main-footer" class="app-main-footer">
     &#xA9; Copyright Lelarat's Database.
 </footer>
+</body>
+</html>

@@ -39,9 +39,11 @@
 <div class="app-cmp-links-bar">
     <nav>
         <ul class="app-cmp-links">
-            <li>
-                <a href="{{ route('products.create-form') }}">Create Product</a>
-            </li>
+            @can('create', \App\Models\Product::class)
+                <li>
+                    <a href="{{ route('products.create-form') }}">Create Product</a>
+                </li>
+            @endcan
         </ul>
     </nav>
     {{ $products->withQueryString()->links() }}

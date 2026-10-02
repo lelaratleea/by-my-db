@@ -22,11 +22,13 @@
     </form>
 </search>
 
-<form action="{{ route('products.remove-shop', [
-    'product' => $product->code,
-]) }}" id="app-form-remove-shop" method="post">
-    @csrf
-</form>
+@can('update', $product)
+    <form action="{{ route('products.remove-shop', [
+        'product' => $product->code,
+    ]) }}" id="app-form-remove-shop" method="post">
+        @csrf
+    </form>
+@endcan
 
 <div class="app-cmp-links-bar">
     <nav>
@@ -37,11 +39,13 @@
                     route('products.view', ['product' => $product->code])
                 }}">&lt; Back</a>
             </li>
-            <li>
-                <a href="{{ route('products.add-shops-form', [
-                    'product' => $product->code,
-                ]) }}">Add Shops</a>
-            </li>
+            @can('update', $product)
+                <li>
+                    <a href="{{ route('products.add-shops-form', [
+                        'product' => $product->code,
+                    ]) }}">Add Shops</a>
+                </li>
+            @endcan
         </ul>
     </nav>
     {{ $shops->withQueryString()->links() }}
@@ -60,7 +64,9 @@
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
                     <th class="app-data-table__th">Owner</th>
                     <th class="app-data-table__th">No. of Products</th>
-                    <th class="app-data-table__th"></th>
+                    @can('update', $product)
+                        <th class="app-data-table__th"></th>
+                    @endcan
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -77,13 +83,16 @@
                         </td>
                         <td class="app-data-table__td">{{ $shop->owner }}</td>
                         <td class="app-data-table__td">{{ $shop->products_count }}</td>
-                        <td class="app-data-table__td">
-                            <button type="submit"
-                                form="app-form-remove-shop"
-                                name="shop" value="{{ $shop->code }}">
-                                Remove
-                            </button>
-                        </td>
+                        @can('update', $product)
+                            <td class="app-data-table__td">
+                                <button type="submit"
+                                    form="app-form-remove-shop"
+                                    name="shop" value="{{ $shop->code }}"
+                                    class="app-data-table__remove">
+                                    Remove
+                                </button>
+                            </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>

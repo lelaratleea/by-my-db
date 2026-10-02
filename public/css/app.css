@@ -401,3 +401,63 @@
 .app-form__cancel:hover {
     background-color: #e5493a;
 }
+
+/* ===== User Panel ===== */
+.app-cmp-user-panel {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 8px 16px;
+    font-weight: bold;
+    color: #5A2E8C;
+}
+
+.app-cmp-user-panel__logout {
+    background-color: #fff;
+    color: #FF6F61;
+    border: 2px solid #FF6F61;
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-cmp-user-panel__logout:hover {
+    background-color: #FF6F61;
+    color: #fff;
+}
+
+/* ===== Error Notification (login) ===== */
+.app-cmp-notifications__error {
+    background-color: #FFE9E6;
+    border: 2px solid #FF6F61;
+    border-radius: 4px;
+    padding: 10px 16px;
+    color: #A3261B;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ===== Login Page ===== */
+.app-login {
+    max-width: 480px;
+    margin: 48px auto;
+}
+
+/* ===== Remove button in table ===== */
+.app-data-table__remove {
+    background-color: #FF6F61;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-data-table__remove:hover {
+    background-color: #e5493a;
+}

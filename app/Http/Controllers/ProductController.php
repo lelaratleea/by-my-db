@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -61,6 +62,8 @@ class ProductController extends SearchableController
 
     function list(ServerRequestInterface $request): View
     {
+        Gate::authorize('list', Product::class);
+
         $criteria = $this->prepareCriteria($request->getQueryParams());
         $query = $this->search($criteria)
             ->with('category')
@@ -75,6 +78,7 @@ class ProductController extends SearchableController
     function view(string $productCode): View
     {
         $product = $this->find($productCode);
+        Gate::authorize('view', $product);
 
         return view('products.view', [
             'product' => $product,
@@ -83,6 +87,8 @@ class ProductController extends SearchableController
 
     function showCreateForm(): View
     {
+        Gate::authorize('create', Product::class);
+
         $categories = \resolve(CategoryController::class)->getQuery()->get();
 
         return view('products.create-form', [
@@ -92,6 +98,8 @@ class ProductController extends SearchableController
 
     function create(ServerRequestInterface $request): RedirectResponse
     {
+        Gate::authorize('create', Product::class);
+
         $data = $request->getParsedBody();
         $category = \resolve(CategoryController::class)->find($data['category']);
 
@@ -120,6 +128,8 @@ class ProductController extends SearchableController
     function showUpdateForm(string $productCode): View
     {
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);
+
         $categories = \resolve(CategoryController::class)->getQuery()->get();
 
         return view('products.update-form', [
@@ -133,6 +143,8 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);
+
         $data = $request->getParsedBody();
         $category = \resolve(CategoryController::class)->find($data['category']);
 
@@ -160,6 +172,8 @@ class ProductController extends SearchableController
     function delete(string $productCode): RedirectResponse
     {
         $product = $this->find($productCode);
+        Gate::authorize('delete', $product);
+
         $product->delete();
 
         return redirect(
@@ -176,6 +190,8 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
     ): View {
         $product = $this->find($productCode);
+        Gate::authorize('view', $product);
+
         $shopController = \resolve(ShopController::class);
         $criteria = $shopController->prepareCriteria($request->getQueryParams());
 
@@ -209,6 +225,8 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
     ): View {
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);
+
         $shopController = \resolve(ShopController::class);
         $criteria = $shopController->prepareCriteria($request->getQueryParams());
 
@@ -227,6 +245,8 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);
+
         $shopController = \resolve(ShopController::class);
         $data = $request->getParsedBody();
 
@@ -249,6 +269,8 @@ class ProductController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $product = $this->find($productCode);
+        Gate::authorize('update', $product);
+
         $data = $request->getParsedBody();
 
         $shop = $product->shops()->where('code', $data['shop'])->firstOrFail();
