@@ -4,10 +4,12 @@
 ])
 
 @section('header')
-<form action="{{ route('shops.delete', ['shop' => $shop->code]) }}" method="post" id="app-form-delete">
-    @csrf
-    @method('delete')
-</form>
+@can('delete', $shop)
+    <form action="{{ route('shops.delete', ['shop' => $shop->code]) }}" method="post" id="app-form-delete">
+        @csrf
+        @method('delete')
+    </form>
+@endcan
 
 <ul class="app-action-links">
     <li>
@@ -16,21 +18,27 @@
             route('shops.list')
         }}" class="app-action-links__back">&lt; Back</a>
     </li>
-    <li>
-        <a href="{{ route('shops.view-products', ['shop' => $shop->code]) }}" class="app-action-links__view-shops">
-            View Products
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('shops.update-form', ['shop' => $shop->code]) }}" class="app-action-links__update">
-            Update
-        </a>
-    </li>
-    <li>
-        <button type="submit" form="app-form-delete" class="app-action-links__delete">
-            Delete
-        </button>
-    </li>
+    @can('view', $shop)
+        <li>
+            <a href="{{ route('shops.view-products', ['shop' => $shop->code]) }}" class="app-action-links__view-shops">
+                View Products
+            </a>
+        </li>
+    @endcan
+    @can('update', $shop)
+        <li>
+            <a href="{{ route('shops.update-form', ['shop' => $shop->code]) }}" class="app-action-links__update">
+                Update
+            </a>
+        </li>
+    @endcan
+    @can('delete', $shop)
+        <li>
+            <button type="submit" form="app-form-delete" class="app-action-links__delete">
+                Delete
+            </button>
+        </li>
+    @endcan
 </ul>
 @endsection
 

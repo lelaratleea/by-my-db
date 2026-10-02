@@ -13,15 +13,14 @@
                 <b>Term</b>
                 <input type="text" name="term" value="{{ $criteria['term'] }}" />
             </label>
-            <br />
             <label>
-                Min Price
+                <b>Min Price</b>
                 <input type="number" name="minPrice" value="{{ $criteria['minPrice'] }}" step="0.01" />
-            </label><br />
+            </label>
             <label>
-                Max Price
+                <b>Max Price</b>
                 <input type="number" name="maxPrice" value="{{ $criteria['maxPrice'] }}" step="0.01" />
-            </label><br />
+            </label>
             <button type="submit">Filter</button>
             <a href="{{ route('shops.view-products', [
                 'shop' => $shop->code,
@@ -30,11 +29,13 @@
     </form>
 </search>
 
-<form action="{{ route('shops.remove-product', [
-    'shop' => $shop->code,
-]) }}" id="app-form-remove-product" method="post">
-    @csrf
-</form>
+@can('update', $shop)
+    <form action="{{ route('shops.remove-product', [
+        'shop' => $shop->code,
+    ]) }}" id="app-form-remove-product" method="post">
+        @csrf
+    </form>
+@endcan
 
 <div class="app-cmp-links-bar">
     <nav>
@@ -45,11 +46,13 @@
                     route('shops.view', ['shop' => $shop->code])
                 }}">&lt; Back</a>
             </li>
-            <li>
-                <a href="{{ route('shops.add-products-form', [
-                    'shop' => $shop->code,
-                ]) }}">Add Products</a>
-            </li>
+            @can('update', $shop)
+                <li>
+                    <a href="{{ route('shops.add-products-form', [
+                        'shop' => $shop->code,
+                    ]) }}">Add Products</a>
+                </li>
+            @endcan
         </ul>
     </nav>
     {{ $products->withQueryString()->links() }}
@@ -70,7 +73,9 @@
                     <th class="app-data-table__th">Category</th>
                     <th class="app-data-table__th">Price</th>
                     <th class="app-data-table__th">No. of Shops</th>
-                    <th class="app-data-table__th"></th>
+                    @can('update', $shop)
+                        <th class="app-data-table__th app-data-table__th--actions"></th>
+                    @endcan
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -100,13 +105,16 @@
                         </td>
                         <td class="app-data-table__td">{{ number_format($product->price, 2) }}</td>
                         <td class="app-data-table__td">{{ $product->shops_count }}</td>
-                        <td class="app-data-table__td">
-                            <button type="submit"
-                                form="app-form-remove-product"
-                                name="product" value="{{ $product->code }}">
-                                Remove
-                            </button>
-                        </td>
+                        @can('update', $shop)
+                            <td class="app-data-table__td app-data-table__td--actions">
+                                <button type="submit"
+                                    form="app-form-remove-product"
+                                    name="product" value="{{ $product->code }}"
+                                    class="app-data-table__remove">
+                                    Remove
+                                </button>
+                            </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>

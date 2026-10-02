@@ -92,7 +92,8 @@
                         <td class="app-data-table__td app-data-table__td--actions">
                             <button type="submit"
                                 form="app-form-add-product"
-                                name="product" value="{{ $product->code }}">
+                                name="product" value="{{ $product->code }}"
+                                class="app-data-table__add">
                                 Add
                             </button>
                         </td>

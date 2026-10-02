@@ -22,11 +22,13 @@
     </form>
 </search>
 
-<form action="{{ route('products.add-shop', [
-    'product' => $product->code,
-]) }}" id="app-form-add-shop" method="post" class="app-cmp-hidden-form">
-    @csrf
-</form>
+@can('update', $product)
+    <form action="{{ route('products.add-shop', [
+        'product' => $product->code,
+    ]) }}" id="app-form-add-shop" method="post" class="app-cmp-hidden-form">
+        @csrf
+    </form>
+@endcan
 
 <div class="app-cmp-links-bar">
     <nav>
@@ -55,7 +57,9 @@
                     <th class="app-data-table__th app-data-table__th--name">Name</th>
                     <th class="app-data-table__th">Owner</th>
                     <th class="app-data-table__th">No. of Products</th>
-                    <th class="app-data-table__th app-data-table__th--actions"></th>
+                    @can('update', $product)
+                        <th class="app-data-table__th app-data-table__th--actions"></th>
+                    @endcan
                 </tr>
             </thead>
             <tbody class="app-data-table__body">
@@ -76,13 +80,16 @@
                         </td>
                         <td class="app-data-table__td">{{ $shop->owner }}</td>
                         <td class="app-data-table__td">{{ $shop->products_count }}</td>
-                        <td class="app-data-table__td app-data-table__td--actions">
-                            <button type="submit"
-                                form="app-form-add-shop"
-                                name="shop" value="{{ $shop->code }}">
-                                Add
-                            </button>
-                        </td>
+                        @can('update', $product)
+                            <td class="app-data-table__td app-data-table__td--actions">
+                                <button type="submit"
+                                    form="app-form-add-shop"
+                                    name="shop" value="{{ $shop->code }}"
+                                    class="app-data-table__add">
+                                    Add
+                                </button>
+                            </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>

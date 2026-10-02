@@ -7,6 +7,7 @@ use App\Models\Shop;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -32,6 +33,8 @@ class ShopController extends SearchableController
 
     function list(ServerRequestInterface $request): View
     {
+        Gate::authorize('list', Shop::class);
+
         $criteria = $this->prepareCriteria($request->getQueryParams());
         $query = $this->search($criteria, null);
 
@@ -44,6 +47,7 @@ class ShopController extends SearchableController
     function view(string $shopCode): View
     {
         $shop = $this->find($shopCode);
+        Gate::authorize('view', $shop);
 
         // Route shops.view bookmarks its own URL for update-form and
         // view-products back links.
@@ -68,11 +72,15 @@ class ShopController extends SearchableController
 
     function showCreateForm(): View
     {
+        Gate::authorize('create', Shop::class);
+
         return view('shops.create-form');
     }
 
     function create(ServerRequestInterface $request): RedirectResponse
     {
+        Gate::authorize('create', Shop::class);
+
         $shop = Shop::create($request->getParsedBody());
 
         if (session()->has('bookmarks.shops.create')) {
@@ -93,6 +101,7 @@ class ShopController extends SearchableController
     function showUpdateForm(string $shopCode): View
     {
         $shop = $this->find($shopCode);
+        Gate::authorize('update', $shop);
 
         return view('shops.update-form', [
             'shop' => $shop,
@@ -104,6 +113,8 @@ class ShopController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $shop = $this->find($shopCode);
+        Gate::authorize('update', $shop);
+
         $shop->fill($request->getParsedBody());
         $shop->save();
 
@@ -125,18 +136,22 @@ class ShopController extends SearchableController
     function delete(string $shopCode): RedirectResponse
     {
         $shop = $this->find($shopCode);
+        Gate::authorize('delete', $shop);
+
         $code = $shop->code;
         $shop->delete();
 
         return redirect(
             session()->get('bookmarks.shops.delete')
-                ?? route('shops.view', ['shop' => $code])
+                ?? route('shops.list')
         )->with('status', "Shop {$code} was deleted.");
     }
 
     function viewProducts(string $shopCode, ServerRequestInterface $request): View
     {
         $shop = $this->find($shopCode);
+        Gate::authorize('view', $shop);
+
         $productController = \resolve(ProductController::class);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
         $filterOptions = $productController->getFilterOptions();
@@ -173,6 +188,8 @@ class ShopController extends SearchableController
         ServerRequestInterface $request,
     ): View {
         $shop = $this->find($shopCode);
+        Gate::authorize('update', $shop);
+
         $productController = \resolve(ProductController::class);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
         $filterOptions = $productController->getFilterOptions();
@@ -195,6 +212,8 @@ class ShopController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $shop = $this->find($shopCode);
+        Gate::authorize('update', $shop);
+
         $productController = \resolve(ProductController::class);
         $data = $request->getParsedBody();
 
@@ -215,6 +234,8 @@ class ShopController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $shop = $this->find($shopCode);
+        Gate::authorize('update', $shop);
+
         $data = $request->getParsedBody();
 
         $product = $shop->products()->where('code', $data['product'])->firstOrFail();

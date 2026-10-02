@@ -7,6 +7,17 @@ use App\Models\User;
 
 class CategoryPolicy
 {
+    function list(User $user): bool
+    {
+        // ทุกคนที่ login ดูรายการได้
+        return true;
+    }
+
+    function view(User $user): bool
+    {
+        return $this->list($user);
+    }
+
     function create(User $user): bool
     {
         return $user->isAdministrator();

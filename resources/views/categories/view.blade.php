@@ -19,9 +19,11 @@
     <li>
         <a href="{{ route('categories.view-products', ['category' => $category->code]) }}" class="app-action-links__view-shops">View Products</a>
     </li>
-    <li>
-        <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>
-    </li>
+    @can('update', $category)
+        <li>
+            <a href="{{ route('categories.update-form', ['category' => $category->code]) }}" class="app-action-links__update">Update</a>
+        </li>
+    @endcan
     @can('delete', $category)
         <li>
             <button type="submit" form="app-form-delete" class="app-action-links__delete">Delete</button>

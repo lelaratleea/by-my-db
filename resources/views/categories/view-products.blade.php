@@ -3,51 +3,57 @@
 ])
 
 @section('header')
-<search>
-    <form action="{{ route('categories.view-products', [
-        'category' => $category->code,
-    ]) }}" method="get" class="app-cmp-search-form">
-        <fieldset>
-            <legend>Search</legend>
-            <label>
-                <b>Term</b>
-                <input type="text" name="term" value="{{ $criteria['term'] }}" />
-            </label>
-            <br />
-            <label>
-                Min Price
-                <input type="number" name="minPrice" value="{{ $criteria['minPrice'] }}" step="0.01" />
-            </label><br />
-            <label>
-                Max Price
-                <input type="number" name="maxPrice" value="{{ $criteria['maxPrice'] }}" step="0.01" />
-            </label><br />
-            <button type="submit">Filter</button>
-            <a href="{{ route('categories.view-products', [
-                'category' => $category->code,
-            ]) }}">Clear</a>
-        </fieldset>
-    </form>
-</search>
+    <search>
+        <form action="{{ route('categories.view-products', [
+            'category' => $category->code,
+        ]) }}" method="get"
+            class="app-cmp-search-form">
+            <fieldset>
+                <legend>Search</legend>
+                <label>
+                    <b>Term</b>
+                    <input type="text" name="term" value="{{ $criteria['term'] }}" />
+                </label>
+                <br />
+                <label>
+                    Min Price
+                    <input type="number" name="minPrice" value="{{ $criteria['minPrice'] }}" step="0.01" />
+                </label><br />
+                <label>
+                    Max Price
+                    <input type="number" name="maxPrice" value="{{ $criteria['maxPrice'] }}" step="0.01" />
+                </label><br />
+                <button type="submit">Filter</button>
+                <a
+                    href="{{ route('categories.view-products', [
+                        'category' => $category->code,
+                    ]) }}">Clear</a>
+            </fieldset>
+        </form>
+    </search>
 
-<div class="app-cmp-links-bar">
-    <nav>
-        <ul class="app-cmp-links">
-            <li>
-                <a href="{{
-                    session()->get('bookmarks.categories.view-products') ??
-                    route('categories.view', ['category' => $category->code])
-                }}">&lt; Back</a>
-            </li>
-            <li>
-                <a href="{{ route('categories.add-products-form', [
-                    'category' => $category->code,
-                ]) }}">Add Products</a>
-            </li>
-        </ul>
-    </nav>
-    {{ $products->withQueryString()->links() }}
-</div>
+    <div class="app-cmp-links-bar">
+        <nav>
+            <ul class="app-cmp-links">
+                <li>
+                    <a
+                        href="{{ session()->get('bookmarks.categories.view-products') ??
+                            route('categories.view', ['category' => $category->code]) }}">&lt;
+                        Back</a>
+                </li>
+                @can('update', $category)
+                    <li>
+                        <a
+                            href="{{ route('categories.add-products-form', [
+                                'category' => $category->code,
+                            ]) }}">Add
+                            Products</a>
+                    </li>
+                @endcan
+            </ul>
+        </nav>
+        {{ $products->withQueryString()->links() }}
+    </div>
 @endsection
 
 @section('content')
@@ -69,12 +75,13 @@
                 @php
                     session()->put('bookmarks.products.view', url()->full());
                 @endphp
-                @foreach($products as $product)
+                @foreach ($products as $product)
                     <tr class="app-data-table__row">
                         <td class="app-data-table__td app-data-table__td--code">
                             <a href="{{ route('products.view', [
                                 'product' => $product->code,
-                            ]) }}" class="app-data-table__link">
+                            ]) }}"
+                                class="app-data-table__link">
                                 {{ $product->code }}
                             </a>
                         </td>

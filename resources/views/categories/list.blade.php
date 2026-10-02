@@ -30,9 +30,11 @@
 <div class="app-cmp-links-bar">
     <nav>
         <ul class="app-cmp-links">
-            <li>
-                <a href="{{ route('categories.create-form') }}">Create Category</a>
-            </li>
+            @can('create', \App\Models\Category::class)
+                <li>
+                    <a href="{{ route('categories.create-form') }}">Create Category</a>
+                </li>
+            @endcan
         </ul>
     </nav>
     {{ $categories->withQueryString()->links() }}

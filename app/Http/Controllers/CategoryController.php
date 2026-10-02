@@ -21,6 +21,8 @@ class CategoryController extends SearchableController
 
     function list(ServerRequestInterface $request): View
     {
+        Gate::authorize('list', Category::class);
+
         $criteria = $this->prepareCriteria($request->getQueryParams());
         $query = $this->search($criteria)->withCount('products');
 
@@ -33,6 +35,7 @@ class CategoryController extends SearchableController
     function view(string $categoryCode): View
     {
         $category = $this->find($categoryCode);
+        Gate::authorize('view', $category);
 
         // Route categories.view bookmarks its own URL for update-form and
         // view-products back links.
@@ -58,6 +61,8 @@ class CategoryController extends SearchableController
     function viewProducts(string $categoryCode, ServerRequestInterface $request): View
     {
         $category = $this->find($categoryCode);
+        Gate::authorize('view', $category);
+
         $productController = \resolve(ProductController::class);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
         $filterOptions = $productController->getFilterOptions();
@@ -95,6 +100,8 @@ class CategoryController extends SearchableController
         ServerRequestInterface $request,
     ): View {
         $category = $this->find($categoryCode);
+        Gate::authorize('update', $category);
+
         $productController = \resolve(ProductController::class);
         $criteria = $productController->prepareCriteria($request->getQueryParams());
         $filterOptions = $productController->getFilterOptions();
@@ -117,6 +124,8 @@ class CategoryController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $category = $this->find($categoryCode);
+        Gate::authorize('update', $category);
+
         $productController = \resolve(ProductController::class);
         $data = $request->getParsedBody();
 
@@ -136,11 +145,15 @@ class CategoryController extends SearchableController
 
     function showCreateForm(): View
     {
+        Gate::authorize('create', Category::class);
+
         return view('categories.create-form');
     }
 
     function create(ServerRequestInterface $request): RedirectResponse
     {
+        Gate::authorize('create', Category::class);
+
         $category = Category::create($request->getParsedBody());
 
         if (session()->has('bookmarks.categories.create')) {
@@ -161,6 +174,7 @@ class CategoryController extends SearchableController
     function showUpdateForm(string $categoryCode): View
     {
         $category = $this->find($categoryCode);
+        Gate::authorize('update', $category);
 
         return view('categories.update-form', [
             'category' => $category,
@@ -172,6 +186,8 @@ class CategoryController extends SearchableController
         ServerRequestInterface $request,
     ): RedirectResponse {
         $category = $this->find($categoryCode);
+        Gate::authorize('update', $category);
+
         $category->fill($request->getParsedBody());
         $category->save();
 

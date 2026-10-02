@@ -21,14 +21,29 @@
            class="app-nav-menu__link {{ request()->routeIs('categories.*') ? 'app-nav-menu__link--active' : '' }}">
             Category
         </a>
+        @can('list', \App\Models\User::class)
+            <a href="{{ route('users.list') }}"
+               class="app-nav-menu__link {{ request()->routeIs('users.*') && !request()->routeIs('users.selves.*') ? 'app-nav-menu__link--active' : '' }}">
+                User
+            </a>
+        @endcan
     </nav>
 
     @auth
+        @php
+            // ทุกหน้ายกเว้น users.selves.* ต้อง bookmark ไว้ให้ปุ่ม Back ของหน้า self
+            if (!Route::is('users.selves.*')) {
+                session()->put('bookmarks.users.selves.view', url()->full());
+            }
+        @endphp
         <form action="{{ route('logout') }}" method="post" id="app-form-logout">
             @csrf
         </form>
         <ul class="app-cmp-user-panel">
-            <li>{{ \Auth::user()->name }}</li>
+            <li>
+                <a href="{{ route('users.selves.view') }}"
+                   class="app-cmp-user-panel__link">{{ \Auth::user()->name }}</a>
+            </li>
             <li>
                 <button type="submit" form="app-form-logout"
                         class="app-cmp-user-panel__logout">Logout</button>

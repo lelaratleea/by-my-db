@@ -7,25 +7,24 @@ use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
-    public function run(): void
+    function run(): void
     {
-        $rows = [
-            ['email' => 'admin@my-db.com', 'name' => 'Administrator', 'role' => 'ADMIN'],
-            ['email' => 'adam@my-db.com',  'name' => 'Adam Smith',    'role' => 'USER'],
-            ['email' => 'user@my-db.com',  'name' => 'User',          'role' => 'USER'],
+        $users = [
+            ['admin@my-db.com', 'Administrator', 'ADMIN'],
+            ['user@my-db.com', 'User', 'USER'],
+            ['adam@my-db.com', 'Adam Smith', 'USER'],
         ];
 
-        foreach ($rows as $row) {
-            // role และ email ไม่อยู่ใน Fillable จึงใช้ forceFill
-            // password จะถูก hash อัตโนมัติจาก casts() 'hashed' ใน User
-            User::firstOrNew(['email' => $row['email']])
-                ->forceFill([
-                    'name' => $row['name'],
-                    'role' => $row['role'],
-                    'password' => '1234',
-                    'email_verified_at' => now(),
-                ])
-                ->save();
+        foreach ($users as [$email, $name, $role]) {
+            // ถ้ามีบัญชีอยู่แล้วจะไม่ทับ (ไม่รีเซ็ตรหัสผ่านเดิม)
+            User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'role' => $role,
+                    'password' => 'password', // plain text, cast 'hashed' จะเข้ารหัสให้
+                ],
+            );
         }
     }
 }
